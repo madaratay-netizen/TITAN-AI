@@ -10,6 +10,7 @@ from core.hardware_detection import detector
 from core.storage_manager.manager import (
     WorkspaceManager, WorkspaceUnavailable, InsufficientSpace, StorageError,
     STANDARD_DIRS, safe_filename)
+from core.live_boot import partition_planner
 from backend.app.config import settings, REPO_ROOT
 
 router = APIRouter(prefix="/api/storage", tags=["storage"])
@@ -32,8 +33,11 @@ class BackupReq(BaseModel):
 
 
 @router.get("/plan")
-def plan():
-    return {"device_usable_gib": 119.24, "partitions": PARTITION_PLAN,
+def plan(device_gb: float = 128.03):
+    """Computed partition plan for a device of `device_gb` (default: the
+    measured 128 GB SSD). Pure planning — no disk operations."""
+    computed = partition_planner.compute_plan(int(device_gb * 1_000_000_000))
+    return {"device_gb": device_gb, "computed": computed.to_dict(),
             "standard_dirs": STANDARD_DIRS}
 
 

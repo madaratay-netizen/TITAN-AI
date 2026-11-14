@@ -170,10 +170,26 @@ and installation docs, `docker-compose.yml`, pinned `requirements.txt`.
   nftables ruleset generated.
 - Routes `/api/security/*` + a Security dashboard view (audit, egress, firewall).
 
-## Remaining — Live-boot build + partition tooling (Phase 6/12/14) 🔜
-Live image build, GRUB/overlay config, and the confirmation-gated on-SSD
-partition/install tooling (identify_disk.sh is the read-only start). Documented;
-scripts to be built + tested on VMs/loopback (never a real user disk).
+## Live-boot & SSD tooling ✅ done & verified (Phase 6/12 — no real disk touched)
+- `core/live_boot/partition_planner.py` — computes the partition plan from a
+  disk's **actual** capacity (fixed EFI/BOOT/SYSTEM/MODELS; WORKSPACE = rest −
+  reserve; scales down on small disks; refuses tiny disks) and **classifies a
+  target** as safe/unsafe (refuses the system disk and non-USB devices; identifies
+  by model+size+bus, never serial). Pure logic — **no disk operations**.
+- `infrastructure/boot/` — reviewed, confirmation-gated shell templates
+  (`bash -n` clean): `partition_ssd.sh` (**dry-run by default**; `--apply` prompts
+  for the device path + `YES` and re-verifies before writing; refuses system/
+  non-USB), `mount_workspace.sh` (mount by label + build the workspace tree),
+  `build_live.sh` (Ubuntu 24.04 Live image build on a dev box only). Plus the
+  read-only `scripts/identify_disk.sh`.
+- **Verified:** the planner produced the real plan for the measured device
+  (119.24 GiB → 118.64 usable, 53.7 GiB exFAT workspace); `/api/storage/plan`
+  returns it live; all scripts pass syntax checks. **No disk was partitioned.**
+- Remaining for a physical deployment (hardware/VM, operator-driven): run the
+  Live build, apply the gated partitioning on the real SSD, install GRUB to
+  TITAN_EFI, and run the Phase-7 system tests (boot, persistence, exFAT on both
+  OSes, update-safety). These require the SSD + a test host and are out of scope
+  for this dev environment by design.
 
 ## Phase 12 — Install/deploy/recovery/test scripts 🟡 partial
 - `scripts/titan_report.py` ✅, `scripts/offline_test.py` ✅ (5/5 pass),
@@ -186,7 +202,7 @@ scripts to be built + tested on VMs/loopback (never a real user disk).
 ## Tests actually run
 | Suite | Result |
 |---|---|
-| `pytest` (engine + registry + API + RAG + dev + cyber + voice + image + storage + video + security) | **123 passed** |
+| `pytest` (engine, registry, API, RAG, dev, cyber, voice, image, storage, video, security, live-boot) | **132 passed** |
 | `scripts/offline_test.py` | **5 passed, 0 failed, 0 skipped** |
 | Live API + chat (`qwen3.5:4b`) | **verified** |
 | Dashboard render (browser) | **verified** |

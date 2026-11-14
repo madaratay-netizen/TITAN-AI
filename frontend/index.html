@@ -559,7 +559,7 @@ async function stLoad(){
   ].map(x=>`<div class="card"><h3>${x[0]}</h3><div class="metric" style="color:${x[0]==='Status'?c:'var(--text)'}">${x[1]} <small>${x[2]}</small></div>${x[3]?`<div class="bar"><i style="width:${x[3]}%"></i></div>`:''}</div>`).join('');
   $('#st-dirs tbody').innerHTML=(h.subdirs||[]).map(d=>`<tr><td>${d.name}</td><td>${d.exists?'✓':'—'}</td><td>${d.files||0}</td><td>${d.size_mb||0}</td></tr>`).join('');
   const p=await api('/api/storage/plan');
-  $('#st-plan tbody').innerHTML=p.partitions.map(x=>`<tr><td>${x.label}</td><td>${x.fs}</td><td>${x.gib}</td><td>${x.windows?'✓':'—'}</td><td>${x.purpose}</td></tr>`).join('');
+  $('#st-plan tbody').innerHTML=(p.computed.partitions||[]).map(x=>`<tr><td>${x.label}</td><td>${x.fs}</td><td>${x.size_gib}</td><td>${x.windows_visible?'✓':'—'}</td><td>${x.purpose}</td></tr>`).join('');
 }
 async function stEnsure(){$('#st-action').textContent='Creating…';
   try{const r=await kcPost('/api/storage/workspace/ensure',{});$('#st-action').textContent='Created: '+(r.created.length?r.created.join(', '):'all present');stLoad();}
