@@ -544,8 +544,9 @@ async function imgPreflight(){const p=imgParams();
     <span class="muted" style="font-size:12px">${r.message}</span></div>`;}
 async function imgGen(){const p=imgParams();$('#img-out').innerHTML='<span class="muted">Submitting to ComfyUI…</span>';$('#img-gen').disabled=true;
   try{const r=await kcPost('/api/image/generate',p);
-    $('#img-out').innerHTML=`<div class="muted" style="font-size:12px">job ${r.prompt_id} · ${r.backend}</div>`+
-      r.images.map(im=>`<img src="/api/image${im.url}" style="max-width:100%;border-radius:8px;margin-top:8px"/>`).join('');}
+    const used = r.prompt_used && r.prompt_used!==imgParams().prompt ? ` · "${r.prompt_used}"` : '';
+    $('#img-out').innerHTML=`<div class="muted" style="font-size:12px">job ${r.prompt_id} · ${r.backend}${used}</div>`+
+      r.images.map(im=>`<img src="${im.url}" style="max-width:100%;border-radius:8px;margin-top:8px"/>`).join('');}
   catch(e){$('#img-out').innerHTML='<div class="card" style="border-color:#5a2a1c"><span style="color:var(--warn)">⚠ '+e.message+'</span></div>';}
   $('#img-gen').disabled=false;}
 $('#img-preflight')&&($('#img-preflight').onclick=imgPreflight);
