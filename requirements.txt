@@ -10,5 +10,9 @@ httpx==0.28.1
 pypdf==5.1.0
 python-docx==1.1.2
 openpyxl==3.1.5
+# Voice Studio — offline system TTS fallback (uses OS SAPI5/eSpeak/NSSpeech).
+# Primary engines (Piper, whisper.cpp, faster-whisper) are optional and detected
+# at runtime; see docs. ffmpeg is required for audio export (detected on PATH).
+pyttsx3==2.98
 # Testing
 pytest==8.3.4

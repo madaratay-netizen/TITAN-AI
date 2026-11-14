@@ -82,9 +82,29 @@ and installation docs, `docker-compose.yml`, pinned `requirements.txt`.
 - No exploitation, stealth, credential-testing, or persistence features — by design.
 - Routes `/api/cyber/*` + a working IT & Cyber Lab dashboard view.
 
-## Phases 6–8, 11 — Studios + hardening 🔜 planned
-Image (ComfyUI/SDXL), Video (scene-based FFmpeg pipeline), Voice (Whisper.cpp +
-Piper), firewall/offline hardening, storage manager. Scaffolded; **not implemented**.
+## Phase 8 — Voice Studio ✅ done & verified live (STT needs an engine install)
+- `modules/voice_studio/` — pluggable local voice:
+  - `engines.py` — honest detection of whisper.cpp / faster-whisper (STT), Piper /
+    pyttsx3 (TTS), ffmpeg, and the system voices (flags Arabic availability).
+  - `tts.py` — Piper (neural) with a **pyttsx3/SAPI fallback that works offline now**;
+    writes a real WAV + duration. Never fabricates audio.
+  - `stt.py` — whisper.cpp + faster-whisper integration; raises STTUnavailable
+    (honest) rather than faking a transcript when no engine is present.
+  - `subtitles.py` — deterministic SRT/VTT from timed segments.
+  - `audio.py` — ffmpeg duration / convert / concat.
+- **Found & fixed a false-positive bug:** whisper.cpp detection matched `main`
+  (→ Windows `main.CPL`) and `whisper` (→ an unrelated project's CLI), wrongly
+  reporting "STT available". Tightened to `whisper-cli`/`whisper-cpp` only.
+- **Verified live:** generated a real offline voiceover (WAV + MP3, played in the UI,
+  3.3–3.5 s @ 22050 Hz via SAPI); ffmpeg duration matched; SRT/VTT correct; STT with
+  a real audio file returned an honest 503 ("install whisper.cpp / faster-whisper").
+- **Arabic:** no Arabic system voice on this machine — reported honestly (needs a
+  Piper ar_* model or a Windows Arabic language pack), per the spec's verify-first rule.
+- Routes `/api/voice/*` + a working Voice Studio dashboard view with audio playback.
+
+## Phases 6–7, 11 — Image/Video + hardening 🔜 planned
+Image (ComfyUI/SDXL), Video (scene-based FFmpeg pipeline), firewall/offline
+hardening, storage manager. Scaffolded; **not implemented**.
 
 ## Phase 12 — Install/deploy/recovery/test scripts 🟡 partial
 - `scripts/titan_report.py` ✅, `scripts/offline_test.py` ✅ (5/5 pass),
@@ -97,7 +117,7 @@ Piper), firewall/offline hardening, storage manager. Scaffolded; **not implement
 ## Tests actually run
 | Suite | Result |
 |---|---|
-| `pytest` (engine + registry + API + RAG + dev lab + cyber lab) | **68 passed** |
+| `pytest` (engine + registry + API + RAG + dev + cyber + voice) | **79 passed** |
 | `scripts/offline_test.py` | **5 passed, 0 failed, 0 skipped** |
 | Live API + chat (`qwen3.5:4b`) | **verified** |
 | Dashboard render (browser) | **verified** |

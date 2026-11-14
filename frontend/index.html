@@ -69,7 +69,7 @@
     <a data-view="models" href="#">Model Manager</a>
     <a class="dim" title="Requires PROFILE 4+ GPU">Image Studio</a>
     <a class="dim" title="Requires PROFILE 5 GPU / external drive">Video Studio</a>
-    <a class="dim" title="Phase 8">Voice Studio</a>
+    <a data-view="voice" href="#">Voice Studio</a>
     <a data-view="knowledge" href="#">Knowledge Center</a>
     <a data-view="dev" href="#">Developer Lab</a>
     <a data-view="cyber" href="#">IT &amp; Cyber Lab</a>
@@ -191,6 +191,31 @@
         </div>
       </div>
       <div class="notice">Read-only diagnostics. Port checks run only on loopback or targets you confirm you're authorized to test. No exploitation, stealth, or credential tools.</div>
+    </div>
+    <!-- VOICE STUDIO -->
+    <div id="view-voice" class="hidden">
+      <h2>Voice Studio <span class="muted">— local speech, offline</span></h2>
+      <div class="grid" style="grid-template-columns:1.3fr 1fr;align-items:start">
+        <div class="card">
+          <h3>Text to speech (voiceover)</h3>
+          <textarea id="vo-text" placeholder="Type text to speak…" style="width:100%;height:110px;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:8px;margin:8px 0">TITAN AI voice studio is running fully offline on this machine.</textarea>
+          <div style="display:flex;gap:8px;align-items:center">
+            <select id="vo-voice" style="flex:1;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:8px"></select>
+            <select id="vo-fmt" style="background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:8px"><option value="wav">wav</option><option value="mp3">mp3</option></select>
+            <button id="vo-gen">Generate</button>
+          </div>
+          <div id="vo-out" style="margin-top:12px"></div>
+        </div>
+        <div class="card">
+          <h3>Engines</h3>
+          <pre id="vo-status" style="white-space:pre-wrap;font-size:12px;margin-top:8px"></pre>
+          <h3 style="margin-top:10px">Subtitles (SRT)</h3>
+          <div class="muted" style="font-size:12px;margin:4px 0">From transcription segments (STT needs whisper.cpp / faster-whisper installed).</div>
+          <button id="vo-srt-demo" style="font-size:12px;padding:5px 10px">Demo SRT from sample segments</button>
+          <pre id="vo-srt" style="white-space:pre-wrap;font-size:12px;margin-top:8px;max-height:150px;overflow:auto"></pre>
+        </div>
+      </div>
+      <div class="notice" id="vo-note"></div>
     </div>
     <!-- MODELS -->
     <div id="view-models" class="hidden">
@@ -365,11 +390,35 @@ $('#cy-ping')&&($('#cy-ping').onclick=cyPing);
 $('#cy-scan')&&($('#cy-scan').onclick=cyScan);
 $('#cy-loganalyze')&&($('#cy-loganalyze').onclick=cyLogs);
 
-function show(v){['dashboard','chat','models','knowledge','dev','cyber'].forEach(x=>$('#view-'+x).classList.toggle('hidden',x!==v));
+// ---- Voice Studio ----
+async function voLoad(){
+  const s=await api('/api/voice/status');
+  $('#vo-status').textContent=`STT: ${s.stt.available?'available':'not installed'} (whisper.cpp/faster-whisper)\n`+
+    `TTS: ${s.tts.available?'available':'not installed'}  ffmpeg: ${s.ffmpeg?'yes':'no'}`;
+  $('#vo-voice').innerHTML=(s.tts.voices||[]).map(v=>`<option value="${v.id}">${v.name}${v.arabic?' (AR)':''}</option>`).join('')||'<option value="">system default</option>';
+  $('#vo-note').textContent=(s.notes||[]).join('  •  ');
+}
+async function voGen(){const text=$('#vo-text').value.trim();if(!text)return;
+  $('#vo-out').innerHTML='<span class="muted">Synthesizing…</span>';$('#vo-gen').disabled=true;
+  try{const j=await kcPost('/api/voice/tts',{text,voice:$('#vo-voice').value||null,format:$('#vo-fmt').value});
+    $('#vo-out').innerHTML=`<audio controls src="${j.url}" style="width:100%"></audio>
+      <div class="muted" style="font-size:12px;margin-top:6px">engine: ${j.engine} · voice: ${j.voice} · ${j.duration_s}s · ${j.sample_rate}Hz
+      · <a href="${j.url}" download style="color:var(--blue)">download</a></div>`;}
+  catch(e){$('#vo-out').innerHTML='<span style="color:var(--bad)">⚠ '+e.message+'</span>';}
+  $('#vo-gen').disabled=false;}
+async function voSrtDemo(){
+  const segs=[{start:0,end:2.4,text:'TITAN AI voice studio'},{start:2.4,end:5.0,text:'running fully offline.'}];
+  const j=await kcPost('/api/voice/subtitles',{segments:segs,format:'srt'});
+  $('#vo-srt').textContent=j.content;}
+$('#vo-gen')&&($('#vo-gen').onclick=voGen);
+$('#vo-srt-demo')&&($('#vo-srt-demo').onclick=voSrtDemo);
+
+function show(v){['dashboard','chat','models','knowledge','dev','cyber','voice'].forEach(x=>$('#view-'+x).classList.toggle('hidden',x!==v));
   document.querySelectorAll('nav a[data-view]').forEach(a=>a.classList.toggle('active',a.dataset.view===v));
   if(v==='models')loadModels();
   if(v==='knowledge')kcLoadLibs();
-  if(v==='cyber')cyLoad();}
+  if(v==='cyber')cyLoad();
+  if(v==='voice')voLoad();}
 document.querySelectorAll('nav a[data-view]').forEach(a=>a.onclick=e=>{e.preventDefault();show(a.dataset.view);});
 $('#send').onclick=send;$('#inp').addEventListener('keydown',e=>{if(e.key==='Enter')send();});
 setInterval(()=>$('#clock').textContent=new Date().toLocaleTimeString(),1000);

@@ -96,7 +96,7 @@ FastAPI app, **loopback-bound by default**, CORS limited to localhost. Endpoints
 | `chat` | **Implemented** (Ollama client, streaming + direct) | Ollama / llama.cpp |
 | `image_studio` | Planned (Phase 6) | ComfyUI + SDXL/FLUX |
 | `video_studio` | Planned (Phase 7) — scene-based pipeline | ComfyUI + FFmpeg + TTS |
-| `voice_studio` | Planned (Phase 8) | Whisper.cpp + Piper |
+| `voice_studio` | **Implemented** (Phase 8) — TTS live, STT engine-gated | Piper/pyttsx3 (TTS), whisper.cpp/faster-whisper (STT), ffmpeg |
 | `knowledge_center` | **Implemented** (Phase 9) — RAG with citations | local embeddings + SQLite vector store |
 | `developer_lab` | **Implemented** (Phase 10) — assistant + approval-gated exec | coding LLM, confined sandbox |
 | `cyber_lab` | **Implemented** (Phase 13) — defensive diagnostics + authorized port check | psutil, sockets, DNS/ping |

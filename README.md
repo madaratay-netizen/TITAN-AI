@@ -28,6 +28,10 @@ any compatible x86-64 PC without touching the host's internal drives.
 - **IT & Cyber Lab** — defensive diagnostics only: system/disk/network health,
   DNS/ping, log analysis, and an **authorization-gated** TCP port check (loopback
   free; other targets require explicit authorization). No exploitation/stealth tools.
+- **Voice Studio** — local text-to-speech (offline, with real audio export to
+  WAV/MP3), SRT/VTT subtitle generation, and speech-to-text wired to
+  whisper.cpp/faster-whisper. Engines are detected and reported honestly; no
+  capability is claimed that isn't installed.
 - **Dashboard** — live hardware, profile, models, and a working chat, loopback-only.
 - **Offline manager** — honest network-state reporting with three isolation levels.
 - **Tests** — deterministic engine tests (`pytest`).
