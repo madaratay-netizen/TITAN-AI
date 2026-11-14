@@ -1,0 +1,15 @@
+# TITAN AI
+.venv/
+__pycache__/
+*.pyc
+*.log
+storage/*.db
+storage/*.db-*
+storage/workspace/
+storage/dev_workspace/
+# Large AI model weights are never committed.
+models/**
+!models/.gitkeep
+node_modules/
+.DS_Store
+Thumbs.db

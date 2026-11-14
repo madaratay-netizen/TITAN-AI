@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TITAN AI</title>
+<style>
+  :root{
+    --bg:#0b0f14; --panel:#121923; --panel2:#0e141c; --line:#1e2a38;
+    --text:#e6edf3; --muted:#8aa0b4; --blue:#3aa0ff; --green:#36d399;
+    --warn:#f5a524; --bad:#f06060; --accent:#1b2a3a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font:14px/1.5 "Segoe UI",system-ui,Roboto,Arial,sans-serif}
+  header{display:flex;align-items:center;gap:12px;padding:16px 22px;
+    border-bottom:1px solid var(--line);background:linear-gradient(90deg,#0d1620,#0b0f14)}
+  .logo{font-weight:800;letter-spacing:2px;font-size:20px}
+  .logo span{color:var(--blue)} .logo b{color:var(--green)}
+  .pill{font-size:12px;padding:3px 10px;border-radius:20px;border:1px solid var(--line);color:var(--muted)}
+  .pill.on{color:var(--green);border-color:#1c5a43}
+  main{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 57px)}
+  nav{border-right:1px solid var(--line);padding:14px;background:var(--panel2)}
+  nav a{display:block;padding:9px 12px;border-radius:8px;color:var(--muted);
+    text-decoration:none;margin-bottom:3px}
+  nav a.active,nav a:hover{background:var(--accent);color:var(--text)}
+  nav .dim{opacity:.45;cursor:not-allowed}
+  .content{padding:22px;max-width:1100px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .card h3{margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+  .metric{font-size:26px;font-weight:700}
+  .metric small{font-size:13px;color:var(--muted);font-weight:400}
+  .bar{height:7px;background:#0a1017;border-radius:6px;overflow:hidden;margin-top:8px}
+  .bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--green))}
+  table{width:100%;border-collapse:collapse;margin-top:6px}
+  th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);font-size:13px}
+  th{color:var(--muted);font-weight:600}
+  .tag{font-size:11px;padding:2px 8px;border-radius:12px}
+  .tag.ok{background:#10351f;color:var(--green)} .tag.cpu_only{background:#3a2e10;color:var(--warn)}
+  .tag.incompatible{background:#3a1515;color:var(--bad)}
+  .section{margin-top:26px} h2{font-size:16px;margin:0 0 12px}
+  .chat{display:flex;flex-direction:column;height:60vh;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .msgs{flex:1;overflow:auto;padding:16px;background:var(--panel2)}
+  .msg{margin-bottom:12px;max-width:80%} .msg.me{margin-left:auto;text-align:right}
+  .msg .b{display:inline-block;padding:9px 13px;border-radius:12px;background:var(--panel);border:1px solid var(--line);white-space:pre-wrap;text-align:left}
+  .msg.me .b{background:#133253;border-color:#1c4a73}
+  .inbar{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);background:var(--panel)}
+  .inbar input{flex:1;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:10px;border-radius:8px}
+  button{background:var(--blue);color:#06101c;border:0;padding:10px 16px;border-radius:8px;font-weight:700;cursor:pointer}
+  button:disabled{opacity:.5;cursor:default}
+  .muted{color:var(--muted)} .hidden{display:none}
+  .notice{font-size:12px;color:var(--warn);margin-top:6px}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><span>TITAN</span> <b>AI</b></div>
+  <span class="pill" id="pill-profile">profile —</span>
+  <span class="pill" id="pill-offline">offline —</span>
+  <span class="pill" id="pill-ollama">ollama —</span>
+  <span style="flex:1"></span>
+  <span class="muted" id="clock"></span>
+</header>
+<main>
+  <nav>
+    <a class="active" data-view="dashboard" href="#">Dashboard</a>
+    <a data-view="chat" href="#">AI Chat</a>
+    <a data-view="models" href="#">Model Manager</a>
+    <a class="dim" title="Requires PROFILE 4+ GPU">Image Studio</a>
+    <a class="dim" title="Requires PROFILE 5 GPU / external drive">Video Studio</a>
+    <a class="dim" title="Phase 8">Voice Studio</a>
+    <a data-view="knowledge" href="#">Knowledge Center</a>
+    <a data-view="dev" href="#">Developer Lab</a>
+    <a class="dim" title="Phase 10">IT &amp; Cyber Lab</a>
+  </nav>
+  <section class="content">
+    <!-- DASHBOARD -->
+    <div id="view-dashboard">
+      <h2>System Overview</h2>
+      <div class="grid" id="cards"></div>
+      <div class="section"><h2>Storage</h2>
+        <table id="disks"><thead><tr><th>Mount</th><th>FS</th><th>Total</th><th>Free</th><th>Used</th></tr></thead><tbody></tbody></table>
+      </div>
+    </div>
+    <!-- CHAT -->
+    <div id="view-chat" class="hidden">
+      <h2>Local AI Chat <span class="muted" id="chat-model"></span></h2>
+      <div class="chat">
+        <div class="msgs" id="msgs"></div>
+        <div class="inbar">
+          <input id="inp" placeholder="Ask the local model… (runs fully offline)" />
+          <button id="send">Send</button>
+        </div>
+      </div>
+      <div class="notice">Every message is answered by the local Ollama model only — nothing leaves this machine.</div>
+    </div>
+    <!-- KNOWLEDGE -->
+    <div id="view-knowledge" class="hidden">
+      <h2>Knowledge Center <span class="muted" id="kc-embed"></span></h2>
+      <div class="grid" style="grid-template-columns:1fr 1fr;align-items:start">
+        <div class="card">
+          <h3>Library</h3>
+          <div style="display:flex;gap:8px;margin:8px 0">
+            <select id="kc-lib" style="flex:1;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:8px"></select>
+            <input id="kc-newlib" placeholder="new library" style="width:120px;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:8px"/>
+            <button id="kc-addlib">+</button>
+          </div>
+          <table id="kc-docs"><thead><tr><th>Document</th><th>Type</th><th>Chunks</th></tr></thead><tbody></tbody></table>
+        </div>
+        <div class="card">
+          <h3>Add knowledge</h3>
+          <input id="kc-docname" placeholder="document name (e.g. notes.txt)" style="width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:8px;margin:8px 0"/>
+          <textarea id="kc-text" placeholder="Paste text to index…" style="width:100%;height:110px;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:8px"></textarea>
+          <div style="display:flex;gap:8px;margin-top:8px"><button id="kc-ingest-text">Index text</button></div>
+          <div style="margin-top:12px">
+            <input id="kc-filepath" placeholder="…or a file path (pdf/docx/xlsx/txt/md/csv)" style="width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:8px"/>
+            <button id="kc-ingest-file" style="margin-top:8px">Index file</button>
+          </div>
+          <div class="notice" id="kc-ingest-status"></div>
+        </div>
+      </div>
+      <div class="section"><h2>Ask the knowledge base</h2>
+        <div class="chat" style="height:46vh">
+          <div class="msgs" id="kc-msgs"></div>
+          <div class="inbar">
+            <input id="kc-q" placeholder="Ask a question about your documents…"/>
+            <button id="kc-ask">Ask</button>
+          </div>
+        </div>
+        <div class="notice">Answers use only your indexed documents, with [n] source citations — fully offline.</div>
+      </div>
+    </div>
+    <!-- DEVELOPER LAB -->
+    <div id="view-dev" class="hidden">
+      <h2>Developer Lab <span class="muted" id="dev-model"></span></h2>
+      <div class="grid" style="grid-template-columns:1fr 1fr;align-items:start">
+        <div class="card">
+          <h3>Coding assistant</h3>
+          <textarea id="dev-task" placeholder="Describe the code you want…" style="width:100%;height:80px;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:8px;margin:8px 0"></textarea>
+          <div style="display:flex;gap:8px">
+            <input id="dev-lang" value="python" style="width:120px;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:8px"/>
+            <button id="dev-gen">Generate</button>
+          </div>
+          <pre id="dev-genout" style="white-space:pre-wrap;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px;max-height:300px;overflow:auto;font-size:12px"></pre>
+        </div>
+        <div class="card">
+          <h3>Run code / command <span class="muted" style="font-weight:400">— approval required</span></h3>
+          <div style="display:flex;gap:8px;margin:8px 0">
+            <select id="dev-kind" style="background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:8px"><option value="python">python</option><option value="shell">shell</option></select>
+            <button id="dev-propose">Propose</button>
+          </div>
+          <textarea id="dev-cmd" placeholder="e.g. print(2**10)" style="width:100%;height:70px;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:8px;font-family:monospace"></textarea>
+          <div id="dev-proposal" style="margin-top:10px"></div>
+          <pre id="dev-runout" style="white-space:pre-wrap;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:10px;max-height:240px;overflow:auto;font-size:12px"></pre>
+          <div class="notice">Nothing runs until you click Approve. Execution is confined to <code>storage/dev_workspace</code>, timed, and destructive patterns are blocked.</div>
+        </div>
+      </div>
+    </div>
+    <!-- MODELS -->
+    <div id="view-models" class="hidden">
+      <h2>Model Compatibility <span class="muted">(evaluated against your hardware)</span></h2>
+      <table id="models"><thead><tr><th>Model</th><th>Kind</th><th>Size</th><th>Quant</th><th>License</th><th>Status</th><th>Installed</th></tr></thead><tbody></tbody></table>
+      <div class="notice">Models are never downloaded automatically. "cpu_only" works but is slow; "incompatible" exceeds safe resources.</div>
+    </div>
+  </section>
+</main>
+<script>
+const $=s=>document.querySelector(s), api=p=>fetch(p).then(r=>r.json());
+function pct(part,total){return total>0?Math.min(100,Math.round(part/total*100)):0;}
+
+async function loadDashboard(){
+  const[prof,hw,off,oll,store]=await Promise.all([
+    api('/api/profile'),api('/api/hardware'),api('/api/offline'),
+    api('/api/ollama/status'),api('/api/storage')]);
+  $('#pill-profile').textContent=prof.profile.key+' · '+prof.profile.name;
+  $('#pill-offline').textContent=off.isolation_level.replace(/_/g,' ');
+  $('#pill-offline').classList.toggle('on',off.offline_mode_enabled);
+  $('#pill-ollama').textContent=oll.running?'ollama v'+oll.version:'ollama off';
+  $('#pill-ollama').classList.toggle('on',oll.running);
+  const g=hw.gpus&&hw.gpus[0];
+  const cards=[
+    ['CPU',hw.cpu.model.trim().slice(0,28),hw.cpu.physical_cores+'C / '+hw.cpu.logical_cores+'T',0],
+    ['RAM',hw.memory.total_gb+' GB',hw.memory.available_gb+' GB free',pct(hw.memory.total_gb-hw.memory.available_gb,hw.memory.total_gb)],
+    ['GPU',g?g.model.slice(0,24):'none',g?g.vram_total_mb+' MB VRAM':'CPU only',g?pct(g.vram_total_mb-g.vram_free_mb,g.vram_total_mb):0],
+    ['Profile',prof.profile.key,prof.profile.name,0],
+    ['Active model',oll.models&&oll.models[0]||'—','via Ollama',0],
+    ['Accel',(hw.accel.backends||[]).join(', '),'backends',0],
+  ];
+  $('#cards').innerHTML=cards.map(c=>`<div class="card"><h3>${c[0]}</h3>
+    <div class="metric">${c[1]} <small>${c[2]}</small></div>
+    ${c[3]?`<div class="bar"><i style="width:${c[3]}%"></i></div>`:''}</div>`).join('');
+  $('#disks tbody').innerHTML=hw.disks.map(d=>`<tr><td>${d.mount}</td><td>${d.filesystem||'—'}</td>
+    <td>${d.total_gb} GB</td><td>${d.free_gb} GB</td>
+    <td><div class="bar" style="width:120px"><i style="width:${pct(d.total_gb-d.free_gb,d.total_gb)}%"></i></div></td></tr>`).join('');
+  $('#chat-model').textContent=oll.models&&oll.models[0]?'· '+oll.models[0]:'';
+}
+async function loadModels(){
+  const d=await api('/api/models');
+  $('#models tbody').innerHTML=d.models.map(m=>`<tr><td>${m.name}</td><td>${m.kind}</td>
+    <td>${m.download_gb} GB</td><td>${m.quantization}</td><td>${m.license}</td>
+    <td><span class="tag ${m.compatibility_status}">${m.compatibility_status}</span></td>
+    <td>${m.installed?'✓':'—'}</td></tr>`).join('');
+}
+function addMsg(text,me){const d=document.createElement('div');d.className='msg'+(me?' me':'');
+  d.innerHTML='<span class="b"></span>';d.querySelector('.b').textContent=text;
+  $('#msgs').appendChild(d);$('#msgs').scrollTop=1e9;return d;}
+async function send(){
+  const inp=$('#inp'),t=inp.value.trim();if(!t)return;inp.value='';
+  addMsg(t,true);$('#send').disabled=true;const out=addMsg('…',false);
+  try{const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({prompt:t})});const j=await r.json();
+    out.querySelector('.b').textContent=r.ok?j.response:('⚠ '+(j.detail||'error'));}
+  catch(e){out.querySelector('.b').textContent='⚠ '+e;}
+  $('#send').disabled=false;inp.focus();
+}
+// ---- Knowledge Center ----
+async function kcLoadLibs(sel){
+  const d=await api('/api/knowledge/libraries');
+  const cur=sel||$('#kc-lib').value;
+  $('#kc-lib').innerHTML=d.libraries.map(l=>`<option value="${l.name}">${l.name} (${l.docs} docs)</option>`).join('')
+    ||'<option value="">— create a library —</option>';
+  if(cur)$('#kc-lib').value=cur;
+  const info=await api('/api/knowledge/info');$('#kc-embed').textContent='· embedder resolves at ingest · '+info.supported_extensions.join(' ');
+  kcLoadDocs();
+}
+async function kcLoadDocs(){
+  const lib=$('#kc-lib').value;if(!lib){$('#kc-docs tbody').innerHTML='';return;}
+  const d=await api('/api/knowledge/'+encodeURIComponent(lib)+'/documents');
+  $('#kc-docs tbody').innerHTML=d.documents.map(x=>`<tr><td>${x.name}</td><td>${x.kind||'—'}</td><td>${x.chunks}</td></tr>`).join('')
+    ||'<tr><td colspan="3" class="muted">no documents yet</td></tr>';
+}
+async function kcPost(url,body){const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const j=await r.json();if(!r.ok)throw new Error(j.detail||'error');return j;}
+async function kcAddLib(){const n=$('#kc-newlib').value.trim();if(!n)return;
+  await kcPost('/api/knowledge/libraries',{name:n});$('#kc-newlib').value='';await kcLoadLibs(n);}
+async function kcIngestText(){const lib=$('#kc-lib').value;if(!lib){alert('create/select a library first');return;}
+  const name=$('#kc-docname').value.trim()||'pasted.txt',text=$('#kc-text').value;if(!text.trim())return;
+  $('#kc-ingest-status').textContent='Indexing…';
+  try{const r=await kcPost('/api/knowledge/ingest-text',{library:lib,name,text});
+    $('#kc-ingest-status').textContent=`Indexed ${r.document}: ${r.chunks} chunks via ${r.embedder}`;
+    $('#kc-text').value='';kcLoadDocs();kcLoadLibs(lib);}
+  catch(e){$('#kc-ingest-status').textContent='⚠ '+e.message;}}
+async function kcIngestFile(){const lib=$('#kc-lib').value;if(!lib){alert('create/select a library first');return;}
+  const path=$('#kc-filepath').value.trim();if(!path)return;$('#kc-ingest-status').textContent='Indexing file…';
+  try{const r=await kcPost('/api/knowledge/ingest-file',{library:lib,path});
+    $('#kc-ingest-status').textContent=`Indexed ${r.document}: ${r.chunks} chunks via ${r.embedder}`;
+    $('#kc-filepath').value='';kcLoadDocs();kcLoadLibs(lib);}
+  catch(e){$('#kc-ingest-status').textContent='⚠ '+e.message;}}
+function kcMsg(text,me){const d=document.createElement('div');d.className='msg'+(me?' me':'');
+  d.innerHTML='<span class="b"></span>';d.querySelector('.b').textContent=text;
+  $('#kc-msgs').appendChild(d);$('#kc-msgs').scrollTop=1e9;return d;}
+async function kcAsk(){const lib=$('#kc-lib').value,q=$('#kc-q').value.trim();if(!lib||!q)return;
+  $('#kc-q').value='';kcMsg(q,true);$('#kc-ask').disabled=true;const out=kcMsg('…',false);
+  try{const j=await kcPost('/api/knowledge/ask',{library:lib,question:q});
+    let s=j.answer;if(j.sources&&j.sources.length)s+='\n\nSources: '+j.sources.map(x=>`[${x.n}] ${x.document} (${x.score})`).join('  ');
+    out.querySelector('.b').textContent=s;}
+  catch(e){out.querySelector('.b').textContent='⚠ '+e.message;}
+  $('#kc-ask').disabled=false;}
+$('#kc-addlib')&&( $('#kc-addlib').onclick=kcAddLib );
+$('#kc-lib')&&( $('#kc-lib').onchange=kcLoadDocs );
+$('#kc-ingest-text')&&( $('#kc-ingest-text').onclick=kcIngestText );
+$('#kc-ingest-file')&&( $('#kc-ingest-file').onclick=kcIngestFile );
+$('#kc-ask')&&( $('#kc-ask').onclick=kcAsk );
+$('#kc-q')&&$('#kc-q').addEventListener('keydown',e=>{if(e.key==='Enter')kcAsk();});
+
+// ---- Developer Lab ----
+async function devGen(){const task=$('#dev-task').value.trim();if(!task)return;
+  $('#dev-genout').textContent='Generating…';$('#dev-gen').disabled=true;
+  try{const j=await kcPost('/api/dev/generate',{task,language:$('#dev-lang').value});
+    $('#dev-genout').textContent=j.result;$('#dev-model').textContent='· '+j.model;}
+  catch(e){$('#dev-genout').textContent='⚠ '+e.message;}
+  $('#dev-gen').disabled=false;}
+let devCurrent=null;
+async function devPropose(){const content=$('#dev-cmd').value;if(!content.trim())return;
+  $('#dev-runout').textContent='';
+  try{const p=await kcPost('/api/dev/propose',{kind:$('#dev-kind').value,content});
+    devCurrent=p.id;
+    const danger=p.dangerous&&p.dangerous.length?`<div style="color:var(--bad);font-size:12px;margin:6px 0">⚠ destructive pattern flagged — blocked unless you override</div>`:'';
+    $('#dev-proposal').innerHTML=`<div style="border:1px solid var(--line);border-radius:8px;padding:10px;background:var(--panel2)">
+      <div class="muted" style="font-size:11px">PROPOSAL ${p.id} · ${p.kind} · will run in ${p.cwd}</div>
+      <pre style="white-space:pre-wrap;font-size:12px;margin:6px 0">${p.content.replace(/</g,'&lt;')}</pre>
+      ${danger}
+      <button id="dev-approve">Approve &amp; run</button>
+      <button id="dev-reject" style="background:#333;color:#eee">Reject</button></div>`;
+    $('#dev-approve').onclick=()=>devApprove(!!(p.dangerous&&p.dangerous.length));
+    $('#dev-reject').onclick=devReject;}
+  catch(e){$('#dev-runout').textContent='⚠ '+e.message;}}
+async function devApprove(allowDanger){if(!devCurrent)return;
+  $('#dev-runout').textContent='Running…';
+  try{const r=await kcPost('/api/dev/approve',{id:devCurrent,confirm:true,allow_dangerous:allowDanger});
+    $('#dev-runout').textContent=`exit ${r.exit_code} (${r.duration_s}s)\n`+
+      (r.stdout?`\nSTDOUT:\n${r.stdout}`:'')+(r.stderr?`\nSTDERR:\n${r.stderr}`:'');
+    $('#dev-proposal').innerHTML='';devCurrent=null;}
+  catch(e){$('#dev-runout').textContent='⚠ '+e.message;}}
+async function devReject(){if(!devCurrent)return;
+  await kcPost('/api/dev/reject',{id:devCurrent});$('#dev-proposal').innerHTML='';
+  $('#dev-runout').textContent='Proposal rejected — nothing ran.';devCurrent=null;}
+$('#dev-gen')&&($('#dev-gen').onclick=devGen);
+$('#dev-propose')&&($('#dev-propose').onclick=devPropose);
+
+function show(v){['dashboard','chat','models','knowledge','dev'].forEach(x=>$('#view-'+x).classList.toggle('hidden',x!==v));
+  document.querySelectorAll('nav a[data-view]').forEach(a=>a.classList.toggle('active',a.dataset.view===v));
+  if(v==='models')loadModels();
+  if(v==='knowledge')kcLoadLibs();}
+document.querySelectorAll('nav a[data-view]').forEach(a=>a.onclick=e=>{e.preventDefault();show(a.dataset.view);});
+$('#send').onclick=send;$('#inp').addEventListener('keydown',e=>{if(e.key==='Enter')send();});
+setInterval(()=>$('#clock').textContent=new Date().toLocaleTimeString(),1000);
+loadDashboard().catch(e=>document.body.insertAdjacentHTML('beforeend','<pre style="color:#f06060">API error: '+e+'</pre>'));
+</script>
+</body>
+</html>

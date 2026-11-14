@@ -1,0 +1,29 @@
+# TITAN AI — optional containerized services.
+# NOTE: Docker is OPTIONAL. The default deployment runs native systemd services
+# on the Linux SSD (see infrastructure/linux). This compose file is provided for
+# development on machines that have Docker, and for isolating ComfyUI later.
+#
+# Ollama runs best as a native host service (GPU passthrough is simpler), so it
+# is NOT containerized here by default; point TITAN at the host Ollama instead.
+version: "3.9"
+
+services:
+  titan-backend:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/backend.Dockerfile
+    image: titan-ai/backend:0.1.0
+    container_name: titan-backend
+    # Local-only binding — do not publish to 0.0.0.0.
+    ports:
+      - "127.0.0.1:8077:8077"
+    environment:
+      TITAN_OFFLINE: "1"
+      # Reach the host's Ollama from inside the container.
+      TITAN_OLLAMA_HOST: "http://host.docker.internal:11434"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./storage:/app/storage
+      - ./configs:/app/configs:ro
+    restart: unless-stopped

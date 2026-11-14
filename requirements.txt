@@ -1,0 +1,14 @@
+# TITAN AI — backend runtime dependencies (version-pinned).
+# Core engine (detector/adaptive/registry/offline) needs NONE of these — it
+# runs on the Python standard library. These power the API + tests.
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.4
+psutil==6.1.1
+httpx==0.28.1
+# Knowledge Center (RAG) — document parsing. Pure-Python, small.
+pypdf==5.1.0
+python-docx==1.1.2
+openpyxl==3.1.5
+# Testing
+pytest==8.3.4
