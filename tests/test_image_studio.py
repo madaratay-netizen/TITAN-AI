@@ -70,9 +70,9 @@ def test_upscale_adds_node_and_bigger_res():
 # -- client parsing --------------------------------------------------------- #
 def test_extract_images_from_history():
     entry = {"outputs": {"9": {"images": [
-        {"filename": "TITAN_0001.png", "subfolder": "", "type": "output"}]}}}
+        {"filename": "ADWIN_0001.png", "subfolder": "", "type": "output"}]}}}
     refs = ComfyUIClient.extract_images(entry)
-    assert len(refs) == 1 and refs[0].filename == "TITAN_0001.png"
+    assert len(refs) == 1 and refs[0].filename == "ADWIN_0001.png"
 
 
 def test_imageref_view_path():

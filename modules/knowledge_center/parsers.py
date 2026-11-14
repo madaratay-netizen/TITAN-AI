@@ -1,4 +1,4 @@
-"""TITAN AI — Knowledge Center document parsers.
+"""ADWIN OS — Knowledge Center document parsers.
 
 Extracts plain text from supported document types for RAG ingestion. Each
 parser degrades gracefully: if an optional library is missing, it raises a

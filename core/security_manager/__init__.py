@@ -1,1 +1,1 @@
-# TITAN AI — Security Manager package (offline hardening)
+# ADWIN OS — Security Manager package (offline hardening)

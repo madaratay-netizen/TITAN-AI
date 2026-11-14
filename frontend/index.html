@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>TITAN AI</title>
+<title>ADWIN OS</title>
 <style>
   :root{
     --bg:#0b0f14; --panel:#121923; --panel2:#0e141c; --line:#1e2a38;
@@ -55,7 +55,7 @@
 </head>
 <body>
 <header>
-  <div class="logo"><span>TITAN</span> <b>AI</b></div>
+  <div class="logo"><span>ADWIN</span> <b>OS</b></div>
   <span class="pill" id="pill-profile">profile —</span>
   <span class="pill" id="pill-offline">offline —</span>
   <span class="pill" id="pill-ollama">ollama —</span>
@@ -200,7 +200,7 @@
       <div class="grid" style="grid-template-columns:1.3fr 1fr;align-items:start">
         <div class="card">
           <h3>Text to speech (voiceover)</h3>
-          <textarea id="vo-text" placeholder="Type text to speak…" style="width:100%;height:110px;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:8px;margin:8px 0">TITAN AI voice studio is running fully offline on this machine.</textarea>
+          <textarea id="vo-text" placeholder="Type text to speak…" style="width:100%;height:110px;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:8px;margin:8px 0">ADWIN OS voice studio is running fully offline on this machine.</textarea>
           <div style="display:flex;gap:8px;align-items:center">
             <select id="vo-voice" style="flex:1;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:8px"></select>
             <select id="vo-fmt" style="background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:8px"><option value="wav">wav</option><option value="mp3">mp3</option></select>
@@ -257,7 +257,7 @@
       <div class="grid" style="grid-template-columns:1.2fr 1fr;align-items:start">
         <div class="card">
           <h3>1 · Storyboard (local LLM)</h3>
-          <textarea id="vid-idea" placeholder="Describe the video idea…" style="width:100%;height:70px;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:8px;margin:8px 0">A 30-second overview of the TITAN AI portable offline workstation</textarea>
+          <textarea id="vid-idea" placeholder="Describe the video idea…" style="width:100%;height:70px;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:8px;margin:8px 0">A 30-second overview of the ADWIN OS portable offline workstation</textarea>
           <div style="display:flex;gap:8px;align-items:center">
             <label class="muted" style="font-size:12px">Scenes <input id="vid-count" type="number" value="4" style="width:56px;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:6px;border-radius:6px"/></label>
             <button id="vid-story">Generate storyboard</button>
@@ -308,7 +308,7 @@
           <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
             <select id="sec-fw-mode" style="background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:8px;border-radius:6px"><option value="offline">offline (strict)</option><option value="download">download</option></select>
             <button id="sec-fw">Show nftables rules</button>
-            <span class="muted" style="font-size:12px">Generated for review — TITAN never applies them automatically.</span>
+            <span class="muted" style="font-size:12px">Generated for review — ADWIN never applies them automatically.</span>
           </div>
           <pre id="sec-fw-out" style="white-space:pre-wrap;font-size:11px;max-height:280px;overflow:auto"></pre>
         </div>
@@ -318,7 +318,7 @@
     <div id="view-storage" class="hidden">
       <h2>Storage Manager <span class="muted">— workspace health &amp; capacity</span></h2>
       <div class="grid" id="st-cards" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))"></div>
-      <div class="section"><h2>TITAN_WORKSPACE</h2>
+      <div class="section"><h2>ADWIN_WORKSPACE</h2>
         <div class="card">
           <div style="display:flex;gap:8px;margin-bottom:8px">
             <button id="st-ensure">Create / repair structure</button>
@@ -331,7 +331,7 @@
       <div class="section"><h2>Approved partition plan (128 GB SSD)</h2>
         <table id="st-plan"><thead><tr><th>Label</th><th>FS</th><th>GiB</th><th>Windows</th><th>Purpose</th></tr></thead><tbody></tbody></table>
       </div>
-      <div class="notice">User outputs live on the exFAT <code>TITAN_WORKSPACE</code> partition — readable from Windows &amp; Linux, protected across updates. A free-space reserve is enforced; TITAN never deletes your files.</div>
+      <div class="notice">User outputs live on the exFAT <code>ADWIN_WORKSPACE</code> partition — readable from Windows &amp; Linux, protected across updates. A free-space reserve is enforced; ADWIN never deletes your files.</div>
     </div>
     <!-- MODELS -->
     <div id="view-models" class="hidden">
@@ -523,7 +523,7 @@ async function voGen(){const text=$('#vo-text').value.trim();if(!text)return;
   catch(e){$('#vo-out').innerHTML='<span style="color:var(--bad)">⚠ '+e.message+'</span>';}
   $('#vo-gen').disabled=false;}
 async function voSrtDemo(){
-  const segs=[{start:0,end:2.4,text:'TITAN AI voice studio'},{start:2.4,end:5.0,text:'running fully offline.'}];
+  const segs=[{start:0,end:2.4,text:'ADWIN OS voice studio'},{start:2.4,end:5.0,text:'running fully offline.'}];
   const j=await kcPost('/api/voice/subtitles',{segments:segs,format:'srt'});
   $('#vo-srt').textContent=j.content;}
 $('#vo-gen')&&($('#vo-gen').onclick=voGen);
@@ -596,7 +596,7 @@ async function vidLoad(){
 }
 async function vidStory(){const idea=$('#vid-idea').value.trim();if(!idea)return;
   $('#vid-scenes').innerHTML='<span class="muted">Generating storyboard locally…</span>';
-  try{const p=await kcPost('/api/video/storyboard',{idea,name:'TITAN clip',scene_count:+$('#vid-count').value});
+  try{const p=await kcPost('/api/video/storyboard',{idea,name:'ADWIN clip',scene_count:+$('#vid-count').value});
     vidProject=p;
     $('#vid-scenes').innerHTML=`<div class="muted" style="font-size:12px;margin-bottom:6px">${p.scenes.length} scenes · ~${p.total_duration}s</div>`+
       p.scenes.map((s,i)=>`<div style="border:1px solid var(--line);border-radius:8px;padding:8px;margin-bottom:6px">

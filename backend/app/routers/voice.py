@@ -1,4 +1,4 @@
-"""TITAN AI — Voice Studio API routes (local STT/TTS, offline)."""
+"""ADWIN OS — Voice Studio API routes (local STT/TTS, offline)."""
 from __future__ import annotations
 
 import re

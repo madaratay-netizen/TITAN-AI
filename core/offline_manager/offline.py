@@ -1,11 +1,11 @@
-"""TITAN AI — Offline Manager.
+"""ADWIN OS — Offline Manager.
 
 Reports network/offline state honestly and distinguishes the three levels the
 spec requires. It does NOT claim full isolation unless that has actually been
 verified by the offline test harness.
 
 Levels:
-  - no_internet_requirement : TITAN works without internet (by design).
+  - no_internet_requirement : ADWIN works without internet (by design).
   - no_network_connectivity : the machine currently has no network link.
   - fully_isolated          : verified no outbound traffic (test-proven only).
 """
@@ -49,7 +49,7 @@ def _can_reach_internet(timeout: float = 1.5) -> bool:
 def check(offline_mode_enabled: bool, isolation_verified: bool = False) -> NetworkState:
     has_link = _has_default_route()
     # When offline mode is enabled we still *report* reachability truthfully,
-    # but TITAN services are expected to refuse outbound AI calls regardless.
+    # but ADWIN services are expected to refuse outbound AI calls regardless.
     reachable = False if offline_mode_enabled else (_can_reach_internet() if has_link else False)
 
     if isolation_verified:
@@ -64,7 +64,7 @@ def check(offline_mode_enabled: bool, isolation_verified: bool = False) -> Netwo
         detail = "No network link detected on this host."
     else:
         level = "no_internet_requirement"
-        detail = "Network available but TITAN does not require it for operation."
+        detail = "Network available but ADWIN does not require it for operation."
 
     return NetworkState(
         has_link=has_link,

@@ -1,4 +1,4 @@
-# TITAN AI configuration. Local-only + offline by default.
+# ADWIN OS configuration. Local-only + offline by default.
 [server]
 host = "127.0.0.1"   # loopback only — never expose to the network by default
 port = 8077

@@ -1,4 +1,4 @@
-"""TITAN AI — Voice Studio speech-to-text.
+"""ADWIN OS — Voice Studio speech-to-text.
 
 Primary engine: whisper.cpp (binary on PATH).
 Alternative:    faster-whisper (CTranslate2, pip-installable, CPU-capable).

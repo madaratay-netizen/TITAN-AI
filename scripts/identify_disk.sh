@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# TITAN AI — external SSD identification (READ-ONLY, Linux).
+# ADWIN OS — external SSD identification (READ-ONLY, Linux).
 #
 # Lists candidate EXTERNAL/USB block devices so an operator can identify the
 # target SSD before any partitioning. This script NEVER writes to any disk.
 # It explicitly refuses to treat the running system's disk as a candidate.
 set -euo pipefail
 
-echo "TITAN AI — disk identification (read-only)"
+echo "ADWIN OS — disk identification (read-only)"
 echo "=========================================="
 
 if ! command -v lsblk >/dev/null 2>&1; then

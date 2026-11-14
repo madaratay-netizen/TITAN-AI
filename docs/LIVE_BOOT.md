@@ -1,24 +1,24 @@
-# TITAN AI — Live Boot Architecture
+# ADWIN OS — Live Boot Architecture
 
-TITAN AI boots a **portable Live Linux** from the external SSD. It does **not**
+ADWIN OS boots a **portable Live Linux** from the external SSD. It does **not**
 install onto the host, does **not** touch the host's internal drives, and does
 **not** modify the host's Windows bootloader.
 
 ## Model: read-only base + writable overlay + persistent data
 ```
 UEFI firmware
-  └─ TITAN_EFI (FAT32, ESP)  → GRUB2  (installed on the SSD only)
-       └─ TITAN_BOOT (ext4)  → kernel + initrd + filesystem.squashfs (READ-ONLY base)
-            └─ OverlayFS writable layer  (persistence on TITAN_SYSTEM)
-                 ├─ /opt/titan        → persistent app/runtime (survives reboot)
-                 ├─ /opt/titan/models → TITAN_MODELS
-                 └─ /workspace        → TITAN_WORKSPACE (exFAT, user data)
+  └─ ADWIN_EFI (FAT32, ESP)  → GRUB2  (installed on the SSD only)
+       └─ ADWIN_BOOT (ext4)  → kernel + initrd + filesystem.squashfs (READ-ONLY base)
+            └─ OverlayFS writable layer  (persistence on ADWIN_SYSTEM)
+                 ├─ /opt/adwin        → persistent app/runtime (survives reboot)
+                 ├─ /opt/adwin/models → ADWIN_MODELS
+                 └─ /workspace        → ADWIN_WORKSPACE (exFAT, user data)
 ```
 - **Base OS is read-only** (SquashFS): reproducible and disposable. A "rebuild
-  Live system" replaces `filesystem.squashfs` on `TITAN_BOOT` and nothing else.
+  Live system" replaces `filesystem.squashfs` on `ADWIN_BOOT` and nothing else.
 - **Writable overlay** (casper `persistent`) holds controlled runtime changes on
-  `TITAN_SYSTEM`. Disposable runtime state can be reset without losing user data.
-- **User data is a separate partition** (`TITAN_WORKSPACE`) and is **never part
+  `ADWIN_SYSTEM`. Disposable runtime state can be reset without losing user data.
+- **User data is a separate partition** (`ADWIN_WORKSPACE`) and is **never part
   of the disposable overlay**.
 
 ## Base distribution
@@ -29,12 +29,12 @@ Cubic), never against the user's SSD.
 
 ## Boot flow
 1. User selects the SSD in the firmware boot menu (one-time, per host).
-2. GRUB (on `TITAN_EFI`) loads kernel + initrd from `TITAN_BOOT`.
+2. GRUB (on `ADWIN_EFI`) loads kernel + initrd from `ADWIN_BOOT`.
 3. `casper` mounts the SquashFS base read-only and layers the OverlayFS
-   persistence from `TITAN_SYSTEM`.
-4. `TITAN_MODELS` and `TITAN_WORKSPACE` are mounted; the workspace structure is
+   persistence from `ADWIN_SYSTEM`.
+4. `ADWIN_MODELS` and `ADWIN_WORKSPACE` are mounted; the workspace structure is
    verified/created.
-5. Auto-login to the TITAN desktop, which launches the backend (loopback) and
+5. Auto-login to the ADWIN desktop, which launches the backend (loopback) and
    opens the dashboard.
 
 ## UEFI / Secure Boot
@@ -54,12 +54,12 @@ Cubic), never against the user's SSD.
   normal.
 
 ## Updates & recovery (summary; see §11 of the brief)
-- **Updates** replace/patch `TITAN_SYSTEM` (and, for a base refresh,
-  `TITAN_BOOT`'s squashfs). The updater **verifies the target partition label**
-  and **refuses** if it resolves to `TITAN_WORKSPACE`. Config is backed up first;
+- **Updates** replace/patch `ADWIN_SYSTEM` (and, for a base refresh,
+  `ADWIN_BOOT`'s squashfs). The updater **verifies the target partition label**
+  and **refuses** if it resolves to `ADWIN_WORKSPACE`. Config is backed up first;
   update integrity is verified before applying.
 - **Recovery / rebuild:** re-flash `filesystem.squashfs` and reinstall GRUB to
-  `TITAN_EFI` from the build artifacts. `TITAN_WORKSPACE` is never part of this
+  `ADWIN_EFI` from the build artifacts. `ADWIN_WORKSPACE` is never part of this
   and keeps all user data.
 - Because the workspace is exFAT, the user can also copy it off from any
   Windows/Linux machine before a rebuild for extra safety.

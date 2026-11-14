@@ -1,11 +1,11 @@
-"""TITAN AI — partition planner (safe, read-only logic).
+"""ADWIN OS — partition planner (safe, read-only logic).
 
 Computes a concrete partition plan from a disk's *actual* capacity and judges
 whether a device is a safe target. This module performs NO disk operations — it
 only produces the plan and the safety verdict that the confirmation-gated shell
 script displays before asking the operator to approve.
 
-Labels: TITAN_EFI, TITAN_BOOT, TITAN_SYSTEM, TITAN_MODELS, TITAN_WORKSPACE.
+Labels: ADWIN_EFI, ADWIN_BOOT, ADWIN_SYSTEM, ADWIN_MODELS, ADWIN_WORKSPACE.
 """
 from __future__ import annotations
 
@@ -83,7 +83,7 @@ def compute_plan(total_bytes: int) -> PartitionPlan:
         scalable = boot + system + models
         if avail_for_scalable < scalable * 0.4:
             raise ValueError(
-                f"disk too small: {usable:.1f} GiB usable cannot hold a TITAN "
+                f"disk too small: {usable:.1f} GiB usable cannot hold a ADWIN "
                 f"layout (need >= {esp + scalable * 0.4 + MIN_WORKSPACE_GIB + reserve:.1f} GiB)")
         factor = max(0.4, avail_for_scalable / scalable)
         boot, system, models = boot * factor, system * factor, models * factor
@@ -96,11 +96,11 @@ def compute_plan(total_bytes: int) -> PartitionPlan:
         return round(x, 1)
 
     parts = [
-        Partition(1, "TITAN_EFI", "FAT32", r(esp), "/boot/efi", True, "UEFI boot (ESP), GRUB on the SSD only"),
-        Partition(2, "TITAN_BOOT", "ext4", r(boot), "/run/live/medium", False, "Live base (read-only SquashFS) + boot files"),
-        Partition(3, "TITAN_SYSTEM", "ext4", r(system), "/opt/titan", False, "Persistent app/runtime, deps, config, logs + overlay"),
-        Partition(4, "TITAN_MODELS", "ext4", r(models), "/opt/titan/models", False, "Optional AI model weights"),
-        Partition(5, "TITAN_WORKSPACE", "exFAT", r(workspace), "/workspace", True, "User outputs — cross-OS, protected"),
+        Partition(1, "ADWIN_EFI", "FAT32", r(esp), "/boot/efi", True, "UEFI boot (ESP), GRUB on the SSD only"),
+        Partition(2, "ADWIN_BOOT", "ext4", r(boot), "/run/live/medium", False, "Live base (read-only SquashFS) + boot files"),
+        Partition(3, "ADWIN_SYSTEM", "ext4", r(system), "/opt/adwin", False, "Persistent app/runtime, deps, config, logs + overlay"),
+        Partition(4, "ADWIN_MODELS", "ext4", r(models), "/opt/adwin/models", False, "Optional AI model weights"),
+        Partition(5, "ADWIN_WORKSPACE", "exFAT", r(workspace), "/workspace", True, "User outputs — cross-OS, protected"),
     ]
     return PartitionPlan(device_total_gib=total_gib, usable_gib=usable,
                          reserve_gib=reserve, partitions=parts, scaled=scaled, notes=notes)
@@ -127,7 +127,7 @@ def classify_target(size_bytes: int, bus: str = "", is_system_disk: bool = False
     if (bus or "").lower() not in ("usb", "usbstorage"):
         v.safe = False
         v.reasons.append(f"Device bus is '{bus or 'unknown'}', not USB — refused "
-                         "(the TITAN SSD is an external USB device).")
+                         "(the ADWIN SSD is an external USB device).")
     size_gib = size_bytes / GIB
     if not (EXPECTED_MIN_GIB <= size_gib <= EXPECTED_MAX_GIB):
         v.warnings.append(

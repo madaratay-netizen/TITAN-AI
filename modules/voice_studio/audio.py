@@ -1,4 +1,4 @@
-"""TITAN AI — Voice Studio audio helpers (ffmpeg).
+"""ADWIN OS — Voice Studio audio helpers (ffmpeg).
 
 Thin wrappers over ffmpeg/ffprobe for duration, format conversion, and
 concatenation. ffmpeg is detected at call time; if absent, a clear error is

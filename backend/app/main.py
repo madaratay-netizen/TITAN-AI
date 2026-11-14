@@ -1,4 +1,4 @@
-"""TITAN AI — Backend API (FastAPI).
+"""ADWIN OS — Backend API (FastAPI).
 
 Exposes the Adaptive Intelligence Engine, model registry, local LLM chat,
 offline status and storage planning over a local-only HTTP API, and serves
@@ -32,12 +32,12 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     handlers=[
         logging.StreamHandler(),
-        logging.FileHandler(REPO_ROOT / "storage" / "titan.log", encoding="utf-8"),
+        logging.FileHandler(REPO_ROOT / "storage" / "adwin.log", encoding="utf-8"),
     ],
 )
-log = logging.getLogger("titan.api")
+log = logging.getLogger("adwin.api")
 
-app = FastAPI(title="TITAN AI", version="0.1.0",
+app = FastAPI(title="ADWIN OS", version="0.1.0",
               description="Portable Offline Intelligence & Creative Studio")
 
 # Local dashboard only — do not open CORS to the internet.
@@ -78,7 +78,7 @@ class ChatRequest(BaseModel):
 # --------------------------------------------------------------------------- #
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "service": "titan", "version": app.version,
+    return {"status": "ok", "service": "adwin", "version": app.version,
             "offline_mode": settings.offline_mode}
 
 
@@ -166,4 +166,4 @@ if _frontend.exists():
         idx = _frontend / "index.html"
         if idx.exists():
             return FileResponse(str(idx))
-        return {"service": "titan", "note": "frontend not built"}
+        return {"service": "adwin", "note": "frontend not built"}

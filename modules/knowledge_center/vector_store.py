@@ -1,8 +1,8 @@
-"""TITAN AI — local vector store (SQLite).
+"""ADWIN OS — local vector store (SQLite).
 
 Stores libraries, documents, and embedded chunks on the local filesystem. No
 external service is contacted. Similarity search is exact cosine in pure Python
-— fine for the local, project-sized knowledge bases TITAN targets.
+— fine for the local, project-sized knowledge bases ADWIN targets.
 
 Chunks are tagged with the embedder name so a library embedded with the lexical
 fallback is never mixed with one embedded by the Ollama model.

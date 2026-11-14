@@ -1,4 +1,4 @@
-"""TITAN AI — text chunking for RAG.
+"""ADWIN OS — text chunking for RAG.
 
 Splits a document into overlapping, roughly word-bounded chunks so retrieval
 returns coherent passages. Pure standard library.

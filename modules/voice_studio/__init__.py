@@ -1,1 +1,1 @@
-# TITAN AI — Voice Studio package (local STT/TTS)
+# ADWIN OS — Voice Studio package (local STT/TTS)

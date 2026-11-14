@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# TITAN AI — optional ComfyUI + SD 1.5 setup (Linux), for AI image generation
+# ADWIN OS — optional ComfyUI + SD 1.5 setup (Linux), for AI image generation
 # and AI scene images in the Video Studio. Run AFTER install_on_ubuntu.sh.
 # Needs a CUDA-capable GPU for reasonable speed (works on ~4 GB VRAM with
 # --lowvram). ~7 GB of downloads (PyTorch + model). No disk operations.
@@ -34,6 +34,6 @@ cat <<EOF
 ComfyUI is installed.  Start it (keep it running) with:
    cd "$COMFY_DIR" && ./venv/bin/python main.py --lowvram --port 8188
 
-Then in TITAN: Image Studio works, and Video Studio "AI scene images"
+Then in ADWIN: Image Studio works, and Video Studio "AI scene images"
 generates a picture per scene. On a 4 GB GPU use 512x512.
 EOF

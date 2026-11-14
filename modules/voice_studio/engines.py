@@ -1,4 +1,4 @@
-"""TITAN AI — Voice Studio engine detection.
+"""ADWIN OS — Voice Studio engine detection.
 
 Honestly reports which local voice engines are available on this machine so the
 UI never claims a capability that isn't installed. Nothing here fabricates STT
@@ -119,7 +119,7 @@ def detect() -> VoiceCapabilities:
         if shutil.which("whisper"):
             caps.notes.append(
                 "Note: an external 'whisper' CLI is on PATH but it is not "
-                "whisper.cpp and lives outside TITAN's environment, so it is not "
+                "whisper.cpp and lives outside ADWIN's environment, so it is not "
                 "used automatically.")
     if not caps.tts_available:
         caps.notes.append(

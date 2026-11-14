@@ -1,4 +1,4 @@
-"""TITAN AI — Video Studio FFmpeg assembler.
+"""ADWIN OS — Video Studio FFmpeg assembler.
 
 Renders a multi-scene VideoProject into a real MP4 using FFmpeg. This is the
 offline, CPU-friendly path that works on any machine with FFmpeg — no AI video
@@ -156,7 +156,7 @@ class Assembler:
         out = Path(out_path)
         out.parent.mkdir(parents=True, exist_ok=True)
         cleanup = self.work_dir is None
-        tmp = Path(self.work_dir) if self.work_dir else Path(tempfile.mkdtemp(prefix="titan_vid_"))
+        tmp = Path(self.work_dir) if self.work_dir else Path(tempfile.mkdtemp(prefix="adwin_vid_"))
         tmp.mkdir(parents=True, exist_ok=True)
         try:
             parts = [self._render_scene(s, i, proj, tmp, with_titles)

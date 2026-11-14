@@ -9,9 +9,9 @@
 <body>
 <canvas id="c" width="1280" height="720"></canvas>
 <script>
-// TITAN code-animation contract: deterministic frame = f(t).
-window.TITAN_DURATION = 7;   // seconds
-window.TITAN_FPS = 30;
+// ADWIN code-animation contract: deterministic frame = f(t).
+window.ADWIN_DURATION = 7;   // seconds
+window.ADWIN_FPS = 30;
 
 const cv = document.getElementById('c');
 const ctx = cv.getContext('2d');
@@ -119,7 +119,7 @@ window.seekTo = function(t){
   ctx.fillStyle='#36d399'; ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=10;
   ctx.fillText('مضخة طرد مركزي', W/2, 56);
   ctx.font='18px "Segoe UI",Arial'; ctx.fillStyle='#8aa0b4'; ctx.shadowBlur=0;
-  ctx.fillText('Centrifugal Pump — TITAN AI code animation', W/2, 80);
+  ctx.fillText('Centrifugal Pump — ADWIN OS code animation', W/2, 80);
 
   ctx.globalAlpha=1;
 };

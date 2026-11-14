@@ -1,4 +1,4 @@
-"""TITAN AI — Image Studio API routes (real ComfyUI; no placeholder images)."""
+"""ADWIN OS — Image Studio API routes (real ComfyUI; no placeholder images)."""
 from __future__ import annotations
 
 import re
@@ -42,7 +42,7 @@ def _to_english(text: str) -> str:
 class GenReq(BaseModel):
     prompt: str
     negative: str = "text, watermark, lowres, bad anatomy"
-    # Defaults match the 4 GB-VRAM-friendly SD 1.5 checkpoint installed with TITAN.
+    # Defaults match the 4 GB-VRAM-friendly SD 1.5 checkpoint installed with ADWIN.
     ckpt_name: str = "v1-5-pruned-emaonly.safetensors"
     width: int = 512
     height: int = 512

@@ -1,4 +1,4 @@
-"""TITAN AI — Developer Lab execution manager (SECURITY-CRITICAL).
+"""ADWIN OS — Developer Lab execution manager (SECURITY-CRITICAL).
 
 Enforces the spec's hard rule: generated code/commands are NEVER executed
 automatically. The flow is always:

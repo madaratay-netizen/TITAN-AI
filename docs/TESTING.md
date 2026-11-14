@@ -1,4 +1,4 @@
-# TITAN AI — Testing
+# ADWIN OS — Testing
 
 ## Automated tests (run with `pytest`)
 Current status: **91 passing** across the engine and every implemented module.
@@ -42,7 +42,7 @@ is absent (matching the "no fake passes" rule).
 - Low-storage behaviour and reserve enforcement.
 - **Workspace persistence across reboots**; exFAT read/write on both Linux and
   Windows.
-- **System update does not overwrite `TITAN_WORKSPACE`.**
+- **System update does not overwrite `ADWIN_WORKSPACE`.**
 - **Host internal drives remain untouched** (verify on a disposable test host /
   VM with virtual disks — never a user's real disk).
 

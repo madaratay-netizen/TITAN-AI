@@ -1,4 +1,4 @@
-"""TITAN AI — Adaptive Intelligence Engine.
+"""ADWIN OS — Adaptive Intelligence Engine.
 
 Turns a HardwareReport into:
   1. a capability profile (P1..P5), and

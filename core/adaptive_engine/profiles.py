@@ -1,4 +1,4 @@
-"""TITAN AI — Capability profiles.
+"""ADWIN OS — Capability profiles.
 
 These are *policy* profiles (initial defaults), NOT guaranteed hardware
 requirements. The engine always re-checks actual free resources before it
@@ -19,7 +19,7 @@ class Profile:
     summary: str
 
 
-# Feature flags used across TITAN modules.
+# Feature flags used across ADWIN modules.
 F_CHAT_LIGHT = "chat_light"
 F_CHAT_STD = "chat_standard"
 F_CHAT_LARGE = "chat_large"

@@ -1,6 +1,6 @@
-"""TITAN AI — runtime configuration.
+"""ADWIN OS — runtime configuration.
 
-Loads settings from configs/titan.toml if present, else sane defaults.
+Loads settings from configs/adwin.toml if present, else sane defaults.
 Local-only binding (127.0.0.1) is the default, per the offline-security spec.
 """
 from __future__ import annotations
@@ -15,7 +15,7 @@ except ModuleNotFoundError:  # pragma: no cover
     tomllib = None  # type: ignore
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-CONFIG_PATH = REPO_ROOT / "configs" / "titan.toml"
+CONFIG_PATH = REPO_ROOT / "configs" / "adwin.toml"
 
 
 @dataclass
@@ -26,7 +26,7 @@ class Settings:
     isolation_verified: bool = False
     ollama_host: str = "http://127.0.0.1:11434"
     default_model: str = "qwen3.5:4b"
-    db_path: str = str(REPO_ROOT / "storage" / "titan.db")
+    db_path: str = str(REPO_ROOT / "storage" / "adwin.db")
     workspace: str = str(REPO_ROOT / "storage" / "workspace")
 
 
@@ -46,9 +46,9 @@ def load_settings() -> Settings:
             s.default_model = ai.get("default_model", s.default_model)
         except Exception:
             pass
-    # Environment overrides (e.g. TITAN_OFFLINE=0 for maintenance).
-    if "TITAN_OFFLINE" in os.environ:
-        s.offline_mode = os.environ["TITAN_OFFLINE"] not in ("0", "false", "False")
+    # Environment overrides (e.g. ADWIN_OFFLINE=0 for maintenance).
+    if "ADWIN_OFFLINE" in os.environ:
+        s.offline_mode = os.environ["ADWIN_OFFLINE"] not in ("0", "false", "False")
     return s
 
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""TITAN AI — Offline Verification Test.
+"""ADWIN OS — Offline Verification Test.
 
 Checks what can be verified *right now* and reports each item honestly as
 PASS / FAIL / SKIP. It does NOT assert full network isolation — that requires
@@ -40,7 +40,7 @@ def record(name, status, detail=""):
 
 
 def main() -> int:
-    print("TITAN AI — Offline Verification Test\n" + "=" * 40)
+    print("ADWIN OS — Offline Verification Test\n" + "=" * 40)
 
     # 1. hardware detection
     try:

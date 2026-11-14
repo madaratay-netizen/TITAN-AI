@@ -1,4 +1,4 @@
-"""TITAN AI — Video Studio storyboard generator.
+"""ADWIN OS — Video Studio storyboard generator.
 
 Turns a project idea into a scene breakdown using the LOCAL LLM (Ollama). This
 is the script / scene-description step of the production workflow. It produces a

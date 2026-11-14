@@ -1,4 +1,4 @@
-"""TITAN AI — Image Studio orchestrator.
+"""ADWIN OS — Image Studio orchestrator.
 
 Ties the ComfyUI client + workflow builders to the Adaptive Engine's VRAM
 budget. Key honesty rules:

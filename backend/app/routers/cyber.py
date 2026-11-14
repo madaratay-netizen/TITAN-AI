@@ -1,4 +1,4 @@
-"""TITAN AI — IT & Cyber Lab API routes (defensive diagnostics only).
+"""ADWIN OS — IT & Cyber Lab API routes (defensive diagnostics only).
 
 Read-only diagnostics plus an authorization-gated TCP port check. No
 exploitation, stealth, credential-testing, or persistence functionality.

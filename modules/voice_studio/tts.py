@@ -1,4 +1,4 @@
-"""TITAN AI — Voice Studio text-to-speech.
+"""ADWIN OS — Voice Studio text-to-speech.
 
 Primary engine: Piper (high-quality neural TTS, Linux SSD target).
 Fallback engine: pyttsx3 over the OS speech engine (SAPI5 on Windows, eSpeak on

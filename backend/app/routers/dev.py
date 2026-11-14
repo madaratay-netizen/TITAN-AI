@@ -1,4 +1,4 @@
-"""TITAN AI — Developer Lab API routes.
+"""ADWIN OS — Developer Lab API routes.
 
 Security model: the assistant only PRODUCES text/code. Execution is gated —
 /propose creates a pending proposal (nothing runs), the exact command/code is

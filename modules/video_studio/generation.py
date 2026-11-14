@@ -1,4 +1,4 @@
-"""TITAN AI — Video Studio AI clip generation (optional, hardware-gated).
+"""ADWIN OS — Video Studio AI clip generation (optional, hardware-gated).
 
 AI video generation (LTX / Wan / HunyuanVideo via ComfyUI) is heavy and needs a
 large-VRAM GPU. This adapter reports availability **honestly** and refuses when

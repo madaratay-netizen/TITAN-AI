@@ -1,4 +1,4 @@
-"""TITAN AI — Model Registry.
+"""ADWIN OS — Model Registry.
 
 A compatibility registry backed by SQLite (metadata) + a JSON seed. It records
 each model's footprint and, given a live HardwareReport, reports:

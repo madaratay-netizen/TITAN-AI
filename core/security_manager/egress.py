@@ -1,4 +1,4 @@
-"""TITAN AI — egress self-test.
+"""ADWIN OS — egress self-test.
 
 Actively checks whether outbound network access is possible, so the system can
 report its true isolation state. It performs only bare TCP connects to public

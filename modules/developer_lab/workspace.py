@@ -1,4 +1,4 @@
-"""TITAN AI — Developer Lab workspace.
+"""ADWIN OS — Developer Lab workspace.
 
 Safe, read-oriented access to a confined project directory. Every path is
 resolved and checked to stay inside the workspace root, so the Developer Lab

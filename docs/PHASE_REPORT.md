@@ -1,4 +1,4 @@
-# TITAN AI — Phase Report
+# ADWIN OS — Phase Report
 
 Honest record of what is **built and verified** vs. **planned**. No feature is
 listed as working unless it was actually run.
@@ -27,7 +27,7 @@ and installation docs, `docker-compose.yml`, pinned `requirements.txt`.
 - `core/offline_manager/` — three-level isolation reporting (never over-claims).
 
 ## Phase 4 — Backend API + Dashboard ✅ done & verified live
-- FastAPI app, loopback-only, logging to `storage/titan.log`. Endpoints:
+- FastAPI app, loopback-only, logging to `storage/adwin.log`. Endpoints:
   health, hardware, profile, models, ollama/status, offline, storage, chat.
 - Dashboard (`frontend/index.html`) rendered live with real hardware, profile,
   models and storage; served at `http://127.0.0.1:8077`.
@@ -127,7 +127,7 @@ and installation docs, `docker-compose.yml`, pinned `requirements.txt`.
   honestly when ComfyUI isn't running. Setup: `scripts/install_comfyui.sh`.
 
 ## Storage / Workspace Manager ✅ done & verified live (Phase 3 / brief §4)
-- `core/storage_manager/` — creates & guards `TITAN_WORKSPACE`:
+- `core/storage_manager/` — creates & guards `ADWIN_WORKSPACE`:
   - `ensure_structure()` — builds the 11 standard folders (Images/Videos/Audio/…).
   - `health()` — filesystem, capacity, used %, **free-space reserve**
     (max 2 GiB / 5%), low-space & below-reserve flags, per-folder file counts/sizes,
@@ -138,7 +138,7 @@ and installation docs, `docker-compose.yml`, pinned `requirements.txt`.
     path-traversal-safe restore. **Never deletes user files.**
 - **Verified live:** health on the dev workspace (NTFS, reserve 5.67 GB); ensure
   created all folders; a 1 PB request was refused ("would breach reserve"); backup
-  zip written; the partition plan (TITAN_EFI/BOOT/SYSTEM/MODELS/WORKSPACE) served.
+  zip written; the partition plan (ADWIN_EFI/BOOT/SYSTEM/MODELS/WORKSPACE) served.
 - Routes `/api/storage/*` + a Storage Manager dashboard view (health cards, folder
   table, plan, ensure/backup actions).
 
@@ -163,7 +163,7 @@ and installation docs, `docker-compose.yml`, pinned `requirements.txt`.
 - `core/security_manager/` — the offline security posture made real:
   - `firewall.py` — generates **nftables** (Linux) + **Windows** firewall rules for
     `offline` (default-drop outbound, loopback only) and `download` (+ DNS/HTTP/S)
-    modes. Templates written to `infrastructure/firewall/`. **TITAN never applies
+    modes. Templates written to `infrastructure/firewall/`. **ADWIN never applies
     them automatically** (that would change system security settings).
   - `egress.py` — egress self-test: bare TCP connects to public DNS IPs (no data
     sent) → `egress_blocked` / `egress_open`, so isolation is reported truthfully.
@@ -193,12 +193,12 @@ and installation docs, `docker-compose.yml`, pinned `requirements.txt`.
   returns it live; all scripts pass syntax checks. **No disk was partitioned.**
 - Remaining for a physical deployment (hardware/VM, operator-driven): run the
   Live build, apply the gated partitioning on the real SSD, install GRUB to
-  TITAN_EFI, and run the Phase-7 system tests (boot, persistence, exFAT on both
+  ADWIN_EFI, and run the Phase-7 system tests (boot, persistence, exFAT on both
   OSes, update-safety). These require the SSD + a test host and are out of scope
   for this dev environment by design.
 
 ## Phase 12 — Install/deploy/recovery/test scripts 🟡 partial
-- `scripts/titan_report.py` ✅, `scripts/offline_test.py` ✅ (5/5 pass),
+- `scripts/adwin_report.py` ✅, `scripts/offline_test.py` ✅ (5/5 pass),
   `scripts/identify_disk.sh` ✅ (read-only, refuses system disk).
 - Partition/Ubuntu-to-SSD install: **documented template only, not executed** —
   deliberately confirmation-gated and never automated.
@@ -214,7 +214,7 @@ and installation docs, `docker-compose.yml`, pinned `requirements.txt`.
 | Dashboard render (browser) | **verified** |
 
 ## Commands executed (key ones)
-`python scripts/titan_report.py` · `python -m venv .venv` ·
+`python scripts/adwin_report.py` · `python -m venv .venv` ·
 `pip install -r requirements.txt` · `pytest -q` · `python scripts/offline_test.py` ·
 `uvicorn backend.app.main:app --host 127.0.0.1 --port 8077`
 

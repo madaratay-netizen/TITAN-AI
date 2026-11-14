@@ -1,6 +1,6 @@
-"""TITAN AI — firewall rule generator (offline hardening).
+"""ADWIN OS — firewall rule generator (offline hardening).
 
-Generates reviewed firewall rulesets for the two network modes. TITAN NEVER
+Generates reviewed firewall rulesets for the two network modes. ADWIN NEVER
 applies these automatically (that would modify system security settings) — it
 writes them for an operator to review and apply with the appropriate privileges.
 
@@ -24,7 +24,7 @@ def nftables_ruleset(mode: str) -> str:
             "        oif \"lo\" accept\n"
             "        # Strict offline: no other outbound allowed.\n"
             "        counter drop\n")
-        comment = "TITAN AI — STRICT OFFLINE (no outbound except loopback)"
+        comment = "ADWIN OS — STRICT OFFLINE (no outbound except loopback)"
     else:
         out_rules = (
             "        ct state established,related accept\n"
@@ -33,17 +33,17 @@ def nftables_ruleset(mode: str) -> str:
             "        udp dport 53 accept\n"
             "        tcp dport 53 accept\n"
             "        tcp dport { 80, 443 } accept\n"
-            "        counter log prefix \"titan-egress-drop \" drop\n")
-        comment = "TITAN AI — DOWNLOAD MODE (DNS + HTTP/HTTPS outbound)"
+            "        counter log prefix \"adwin-egress-drop \" drop\n")
+        comment = "ADWIN OS — DOWNLOAD MODE (DNS + HTTP/HTTPS outbound)"
     return (
         f"#!/usr/sbin/nft -f\n# {comment}\n"
         "flush ruleset\n\n"
-        "table inet titan {\n"
+        "table inet adwin {\n"
         "    chain input {\n"
         "        type filter hook input priority 0; policy drop;\n"
         "        ct state established,related accept\n"
         "        iif \"lo\" accept\n"
-        "        # TITAN services bind to loopback only; no inbound needed.\n"
+        "        # ADWIN services bind to loopback only; no inbound needed.\n"
         "    }\n"
         "    chain forward {\n"
         "        type filter hook forward priority 0; policy drop;\n"
@@ -55,30 +55,30 @@ def nftables_ruleset(mode: str) -> str:
         "}\n")
 
 
-def windows_ps1(mode: str, app_dir: str = r"C:\TITAN-AI") -> str:
-    """A PowerShell script the user runs (as admin) to block TITAN outbound.
+def windows_ps1(mode: str, app_dir: str = r"C:\ADWIN-OS") -> str:
+    """A PowerShell script the user runs (as admin) to block ADWIN outbound.
 
-    This blocks outbound for the TITAN app directory only; it does not alter
+    This blocks outbound for the ADWIN app directory only; it does not alter
     global firewall policy. Download mode removes the block.
     """
     if mode not in MODES:
         raise ValueError("mode must be 'offline' or 'download'")
     if mode == "offline":
         return (
-            "# TITAN AI — block outbound for the app (run as Administrator).\n"
-            "# Blocks only TITAN's own executables, not the whole system.\n"
+            "# ADWIN OS — block outbound for the app (run as Administrator).\n"
+            "# Blocks only ADWIN's own executables, not the whole system.\n"
             f"$app = '{app_dir}'\n"
             "Get-ChildItem -Path $app -Recurse -Include *.exe | ForEach-Object {\n"
-            "  New-NetFirewallRule -DisplayName \"TITAN-block-$($_.Name)\" "
+            "  New-NetFirewallRule -DisplayName \"ADWIN-block-$($_.Name)\" "
             "-Direction Outbound -Program $_.FullName -Action Block "
             "-Profile Any -ErrorAction SilentlyContinue | Out-Null\n"
             "}\n"
-            "Write-Output 'TITAN outbound blocked. Remove with the download-mode script.'\n")
+            "Write-Output 'ADWIN outbound blocked. Remove with the download-mode script.'\n")
     return (
-        "# TITAN AI — remove TITAN outbound block (run as Administrator).\n"
-        "Get-NetFirewallRule -DisplayName 'TITAN-block-*' -ErrorAction "
+        "# ADWIN OS — remove ADWIN outbound block (run as Administrator).\n"
+        "Get-NetFirewallRule -DisplayName 'ADWIN-block-*' -ErrorAction "
         "SilentlyContinue | Remove-NetFirewallRule\n"
-        "Write-Output 'TITAN outbound block removed (download mode).'\n")
+        "Write-Output 'ADWIN outbound block removed (download mode).'\n")
 
 
 def write_templates(out_dir: str | Path) -> list[str]:
@@ -94,12 +94,12 @@ def write_templates(out_dir: str | Path) -> list[str]:
         written += [str(nft), str(ps)]
     readme = out / "README.md"
     readme.write_text(
-        "# TITAN AI firewall rules (reviewed templates)\n\n"
-        "TITAN generates these; it never applies them automatically.\n\n"
+        "# ADWIN OS firewall rules (reviewed templates)\n\n"
+        "ADWIN generates these; it never applies them automatically.\n\n"
         "- `nftables.offline.nft` / `nftables.download.nft` — Linux (SSD target):\n"
         "  `sudo nft -f nftables.offline.nft`\n"
         "- `windows_firewall.offline.ps1` / `.download.ps1` — Windows dev host,\n"
-        "  run as Administrator. Blocks only TITAN's own executables.\n\n"
+        "  run as Administrator. Blocks only ADWIN's own executables.\n\n"
         "Offline mode: loopback + established only. Download mode: + DNS/HTTP(S).\n",
         encoding="utf-8")
     written.append(str(readme))

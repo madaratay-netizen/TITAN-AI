@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# TITAN AI — partition the external SSD (CONFIRMATION-GATED, Linux).
+# ADWIN OS — partition the external SSD (CONFIRMATION-GATED, Linux).
 #
 # SAFETY (brief §12): this script is DRY-RUN by default. It never partitions a
 # disk automatically, refuses the running system disk and any non-USB device,
@@ -42,7 +42,7 @@ ROOT_SRC="$(findmnt -no SOURCE / || true)"
 ROOT_DISK="$(lsblk -no PKNAME "$ROOT_SRC" 2>/dev/null | head -n1 || true)"
 [ "$NAME" = "${ROOT_DISK:-__none__}" ] && die "$DEV hosts the running system (/)"
 
-# Refuse non-USB (the TITAN SSD is external USB).
+# Refuse non-USB (the ADWIN SSD is external USB).
 [ "$BUS" = "usb" ] || die "$DEV bus is '${BUS:-unknown}', not usb"
 
 # Size sanity (warn, don't hard-fail — operator confirms).
@@ -54,20 +54,20 @@ fi
 ESP=1; BOOT=21; SYSTEM=14; MODELS=23
 RESERVE=$(( SIZE_GIB / 20 )); [ "$RESERVE" -lt 2 ] && RESERVE=2
 WORKSPACE=$(( SIZE_GIB - ESP - BOOT - SYSTEM - MODELS - RESERVE ))
-[ "$WORKSPACE" -lt 10 ] && die "disk too small for a safe TITAN layout"
+[ "$WORKSPACE" -lt 10 ] && die "disk too small for a safe ADWIN layout"
 
 cat <<EOF
 
-TITAN AI — proposed partition plan for: $DEV
+ADWIN OS — proposed partition plan for: $DEV
   Model : ${MODEL:-unknown}
   Size  : ${SIZE_GIB} GiB   Bus: ${BUS}   (serial NOT trusted)
 
   #  LABEL            FS      SIZE
-  1  TITAN_EFI        FAT32   ${ESP} GiB
-  2  TITAN_BOOT       ext4    ${BOOT} GiB
-  3  TITAN_SYSTEM     ext4    ${SYSTEM} GiB
-  4  TITAN_MODELS     ext4    ${MODELS} GiB
-  5  TITAN_WORKSPACE  exFAT   ${WORKSPACE} GiB   (Windows-visible)
+  1  ADWIN_EFI        FAT32   ${ESP} GiB
+  2  ADWIN_BOOT       ext4    ${BOOT} GiB
+  3  ADWIN_SYSTEM     ext4    ${SYSTEM} GiB
+  4  ADWIN_MODELS     ext4    ${MODELS} GiB
+  5  ADWIN_WORKSPACE  exFAT   ${WORKSPACE} GiB   (Windows-visible)
      (reserve/free)           ${RESERVE} GiB
 
   *** ALL EXISTING DATA ON $DEV WILL BE ERASED ***
@@ -77,16 +77,16 @@ print_commands() {
   cat <<EOF
   # (commands that would run)
   sgdisk --zap-all "$DEV"
-  sgdisk -n1:0:+${ESP}GiB     -t1:EF00 -c1:TITAN_EFI "$DEV"
-  sgdisk -n2:0:+${BOOT}GiB    -t2:8300 -c2:TITAN_BOOT "$DEV"
-  sgdisk -n3:0:+${SYSTEM}GiB  -t3:8300 -c3:TITAN_SYSTEM "$DEV"
-  sgdisk -n4:0:+${MODELS}GiB  -t4:8300 -c4:TITAN_MODELS "$DEV"
-  sgdisk -n5:0:+${WORKSPACE}GiB -t5:0700 -c5:TITAN_WORKSPACE "$DEV"
-  mkfs.vfat  -F32 -n TITAN_EFI       ${DEV}1
-  mkfs.ext4  -L TITAN_BOOT           ${DEV}2
-  mkfs.ext4  -L TITAN_SYSTEM         ${DEV}3
-  mkfs.ext4  -L TITAN_MODELS         ${DEV}4
-  mkfs.exfat -n TITAN_WORKSPACE      ${DEV}5
+  sgdisk -n1:0:+${ESP}GiB     -t1:EF00 -c1:ADWIN_EFI "$DEV"
+  sgdisk -n2:0:+${BOOT}GiB    -t2:8300 -c2:ADWIN_BOOT "$DEV"
+  sgdisk -n3:0:+${SYSTEM}GiB  -t3:8300 -c3:ADWIN_SYSTEM "$DEV"
+  sgdisk -n4:0:+${MODELS}GiB  -t4:8300 -c4:ADWIN_MODELS "$DEV"
+  sgdisk -n5:0:+${WORKSPACE}GiB -t5:0700 -c5:ADWIN_WORKSPACE "$DEV"
+  mkfs.vfat  -F32 -n ADWIN_EFI       ${DEV}1
+  mkfs.ext4  -L ADWIN_BOOT           ${DEV}2
+  mkfs.ext4  -L ADWIN_SYSTEM         ${DEV}3
+  mkfs.ext4  -L ADWIN_MODELS         ${DEV}4
+  mkfs.exfat -n ADWIN_WORKSPACE      ${DEV}5
 EOF
 }
 
@@ -113,15 +113,15 @@ NOW_BUS="$(lsblk -dno TRAN "$DEV" | xargs)"
 
 echo "Partitioning $DEV ..."
 sgdisk --zap-all "$DEV"
-sgdisk -n1:0:+${ESP}GiB     -t1:EF00 -c1:TITAN_EFI "$DEV"
-sgdisk -n2:0:+${BOOT}GiB    -t2:8300 -c2:TITAN_BOOT "$DEV"
-sgdisk -n3:0:+${SYSTEM}GiB  -t3:8300 -c3:TITAN_SYSTEM "$DEV"
-sgdisk -n4:0:+${MODELS}GiB  -t4:8300 -c4:TITAN_MODELS "$DEV"
-sgdisk -n5:0:+${WORKSPACE}GiB -t5:0700 -c5:TITAN_WORKSPACE "$DEV"
+sgdisk -n1:0:+${ESP}GiB     -t1:EF00 -c1:ADWIN_EFI "$DEV"
+sgdisk -n2:0:+${BOOT}GiB    -t2:8300 -c2:ADWIN_BOOT "$DEV"
+sgdisk -n3:0:+${SYSTEM}GiB  -t3:8300 -c3:ADWIN_SYSTEM "$DEV"
+sgdisk -n4:0:+${MODELS}GiB  -t4:8300 -c4:ADWIN_MODELS "$DEV"
+sgdisk -n5:0:+${WORKSPACE}GiB -t5:0700 -c5:ADWIN_WORKSPACE "$DEV"
 partprobe "$DEV" || true
-mkfs.vfat  -F32 -n TITAN_EFI       "${DEV}1"
-mkfs.ext4  -F -L TITAN_BOOT        "${DEV}2"
-mkfs.ext4  -F -L TITAN_SYSTEM      "${DEV}3"
-mkfs.ext4  -F -L TITAN_MODELS      "${DEV}4"
-mkfs.exfat -n TITAN_WORKSPACE      "${DEV}5"
-echo "Done. TITAN_WORKSPACE (exFAT) is readable from Windows and Linux."
+mkfs.vfat  -F32 -n ADWIN_EFI       "${DEV}1"
+mkfs.ext4  -F -L ADWIN_BOOT        "${DEV}2"
+mkfs.ext4  -F -L ADWIN_SYSTEM      "${DEV}3"
+mkfs.ext4  -F -L ADWIN_MODELS      "${DEV}4"
+mkfs.exfat -n ADWIN_WORKSPACE      "${DEV}5"
+echo "Done. ADWIN_WORKSPACE (exFAT) is readable from Windows and Linux."

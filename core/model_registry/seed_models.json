@@ -1,5 +1,5 @@
 {
-  "_comment": "TITAN AI model registry seed. Sizes are approximate published estimates, not guarantees. VRAM/RAM are conservative loading estimates for the given quantization. Verify licenses at the source before distribution. 'default' models are small enough for a 128GB-SSD install; large video models are optional and NOT installed by default.",
+  "_comment": "ADWIN OS model registry seed. Sizes are approximate published estimates, not guarantees. VRAM/RAM are conservative loading estimates for the given quantization. Verify licenses at the source before distribution. 'default' models are small enough for a 128GB-SSD install; large video models are optional and NOT installed by default.",
   "schema_version": 1,
   "models": [
     {

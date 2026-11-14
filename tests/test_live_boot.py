@@ -9,8 +9,8 @@ GB = 1_000_000_000
 def test_plan_128gb_structure():
     plan = pp.compute_plan(128 * GB)
     labels = [p.label for p in plan.partitions]
-    assert labels == ["TITAN_EFI", "TITAN_BOOT", "TITAN_SYSTEM",
-                      "TITAN_MODELS", "TITAN_WORKSPACE"]
+    assert labels == ["ADWIN_EFI", "ADWIN_BOOT", "ADWIN_SYSTEM",
+                      "ADWIN_MODELS", "ADWIN_WORKSPACE"]
     ws = plan.partitions[-1]
     assert ws.fs == "exFAT" and ws.windows_visible is True
     assert ws.size_gib > 40            # ~52-54 GiB on a 128 GB disk
@@ -63,4 +63,4 @@ def test_classify_warns_unexpected_size():
 
 def test_render_table():
     out = pp.render_plan_table(pp.compute_plan(128 * GB))
-    assert "TITAN_WORKSPACE" in out and "usable" in out
+    assert "ADWIN_WORKSPACE" in out and "usable" in out

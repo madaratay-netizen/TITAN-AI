@@ -1,4 +1,4 @@
-"""TITAN AI — Scene Builder (component-composition pipeline, offline).
+"""ADWIN OS — Scene Builder (component-composition pipeline, offline).
 
 Open-ended engineering videos WITHOUT pre-made whole-scene templates: the local
 LLM only produces a small JSON "scene spec" (which components, where, labels,
@@ -90,7 +90,7 @@ def plan_scene(request: str, model: str, host: str = "http://127.0.0.1:11434") -
 def validate_repair(spec: dict) -> dict:
     """Make the spec safe to render: valid types, clamped coords, valid refs."""
     out = {"title": str(spec.get("title", "مشهد هندسي"))[:60],
-           "subtitle": str(spec.get("subtitle", "TITAN AI"))[:80],
+           "subtitle": str(spec.get("subtitle", "ADWIN OS"))[:80],
            "duration": _clamp(spec.get("duration", 9), 5, 20, 9),
            "components": [], "pipes": []}
     ids = set()
@@ -143,7 +143,7 @@ def validate_repair(spec: dict) -> dict:
 def build_html(spec: dict) -> str:
     """Inject the scene spec into the framework template."""
     tpl = FRAMEWORK.read_text(encoding="utf-8")
-    return tpl.replace("__TITAN_SCENE_JSON__", json.dumps(spec, ensure_ascii=False))
+    return tpl.replace("__ADWIN_SCENE_JSON__", json.dumps(spec, ensure_ascii=False))
 
 
 def make_video(request: str, out_path: str, model: str,
@@ -153,7 +153,7 @@ def make_video(request: str, out_path: str, model: str,
     raw = plan_scene(request, model=model, host=host)
     spec = validate_repair(raw)
     html = build_html(spec)
-    tmp = Path(tempfile.mkdtemp(prefix="titan_scene_")) / "scene.html"
+    tmp = Path(tempfile.mkdtemp(prefix="adwin_scene_")) / "scene.html"
     tmp.write_text(html, encoding="utf-8")
     result: AnimationResult = render_html_animation(
         str(tmp), out_path, width=width, height=height, fps=fps)

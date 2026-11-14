@@ -1,4 +1,4 @@
-"""TITAN AI — Security / offline-hardening API routes."""
+"""ADWIN OS — Security / offline-hardening API routes."""
 from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException
@@ -34,6 +34,6 @@ def firewall_rules(mode: str = "offline"):
         return {"mode": mode,
                 "nftables": firewall.nftables_ruleset(mode),
                 "windows_ps1": firewall.windows_ps1(mode),
-                "note": "Reviewed templates. TITAN never applies these automatically."}
+                "note": "Reviewed templates. ADWIN never applies these automatically."}
     except ValueError as exc:
         raise HTTPException(400, str(exc))

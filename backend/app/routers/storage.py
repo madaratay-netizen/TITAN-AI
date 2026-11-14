@@ -1,4 +1,4 @@
-"""TITAN AI — Storage / Workspace Manager API routes."""
+"""ADWIN OS — Storage / Workspace Manager API routes."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -19,11 +19,11 @@ _wm = WorkspaceManager(settings.workspace)
 
 # Approved 128 GB (119.24 GiB) partition plan (see docs/STORAGE_LAYOUT.md).
 PARTITION_PLAN = [
-    {"label": "TITAN_EFI", "fs": "FAT32", "gib": 1, "windows": True, "purpose": "UEFI boot (ESP)"},
-    {"label": "TITAN_BOOT", "fs": "ext4", "gib": 21, "windows": False, "purpose": "Live base (read-only) + boot files"},
-    {"label": "TITAN_SYSTEM", "fs": "ext4", "gib": 14, "windows": False, "purpose": "Persistent app/runtime, config, logs"},
-    {"label": "TITAN_MODELS", "fs": "ext4", "gib": 23, "windows": False, "purpose": "Optional AI model weights"},
-    {"label": "TITAN_WORKSPACE", "fs": "exFAT", "gib": 52, "windows": True, "purpose": "User outputs — cross-OS, protected"},
+    {"label": "ADWIN_EFI", "fs": "FAT32", "gib": 1, "windows": True, "purpose": "UEFI boot (ESP)"},
+    {"label": "ADWIN_BOOT", "fs": "ext4", "gib": 21, "windows": False, "purpose": "Live base (read-only) + boot files"},
+    {"label": "ADWIN_SYSTEM", "fs": "ext4", "gib": 14, "windows": False, "purpose": "Persistent app/runtime, config, logs"},
+    {"label": "ADWIN_MODELS", "fs": "ext4", "gib": 23, "windows": False, "purpose": "Optional AI model weights"},
+    {"label": "ADWIN_WORKSPACE", "fs": "exFAT", "gib": 52, "windows": True, "purpose": "User outputs — cross-OS, protected"},
     {"label": "(free)", "fs": "-", "gib": 8.2, "windows": False, "purpose": "Recovery buffer + over-provisioning"},
 ]
 
@@ -63,7 +63,7 @@ def ensure():
 
 @router.post("/workspace/backup")
 def backup():
-    cfg = REPO_ROOT / "configs" / "titan.toml"
+    cfg = REPO_ROOT / "configs" / "adwin.toml"
     try:
         path = _wm.backup_settings(extra_paths=[cfg] if cfg.exists() else None)
     except StorageError as exc:

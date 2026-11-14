@@ -1,4 +1,4 @@
-"""TITAN AI — Video Studio project & scene model.
+"""ADWIN OS — Video Studio project & scene model.
 
 A video is a *multi-scene production*, persisted as JSON so work survives
 interruption (resume-after-crash). Edit operations: add, remove, reorder,

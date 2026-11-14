@@ -1,4 +1,4 @@
-"""TITAN AI — Local LLM client (Ollama).
+"""ADWIN OS — Local LLM client (Ollama).
 
 Thin, dependency-light client for a locally running Ollama server. Uses only
 the standard library (urllib) so it works without extra installs. All traffic

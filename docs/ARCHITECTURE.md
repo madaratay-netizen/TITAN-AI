@@ -1,6 +1,6 @@
-# TITAN AI — Architecture
+# ADWIN OS — Architecture
 
-**TITAN AI** is a portable, offline-first AI workstation designed to live on an
+**ADWIN OS** is a portable, offline-first AI workstation designed to live on an
 external SSD, boot on an x86-64 PC, and run local AI (chat, documents, and —
 where hardware permits — image/audio/video) with **no cloud, no API keys, and
 no mandatory internet**.
@@ -23,12 +23,12 @@ This document reflects the **as-built** state plus the planned module map. See
 
 ```
                     ┌───────────────────────────────────────────┐
-  Browser (local)   │              TITAN Dashboard                │  frontend/  (static, API-driven)
+  Browser (local)   │              ADWIN Dashboard                │  frontend/  (static, API-driven)
   127.0.0.1:8077 ───▶  Dashboard · Chat · Models · (Studios…)      │
                     └───────────────┬─────────────────────────────┘
                                     │ HTTP (loopback only)
                     ┌───────────────▼─────────────────────────────┐
-                    │           TITAN Backend API (FastAPI)        │  backend/
+                    │           ADWIN Backend API (FastAPI)        │  backend/
                     │  /hardware /profile /models /chat /offline…  │
                     └───┬───────────┬───────────┬───────────┬──────┘
                         │           │           │           │
@@ -88,7 +88,7 @@ FastAPI app, **loopback-bound by default**, CORS limited to localhost. Endpoints
 `/api/health`, `/api/hardware`, `/api/profile`, `/api/models`,
 `/api/ollama/status`, `/api/offline`, `/api/storage`, and `POST /api/chat`
 (guards against any non-local AI endpoint, then calls local Ollama). Logs to
-`storage/titan.log`.
+`storage/adwin.log`.
 
 ## 5. Module layer (`modules/`)
 | Module | Status | Engine(s) |

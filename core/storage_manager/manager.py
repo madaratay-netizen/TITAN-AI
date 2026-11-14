@@ -1,6 +1,6 @@
-"""TITAN AI — Storage / Workspace Manager.
+"""ADWIN OS — Storage / Workspace Manager.
 
-Creates and guards the persistent TITAN_WORKSPACE, reports capacity & health,
+Creates and guards the persistent ADWIN_WORKSPACE, reports capacity & health,
 enforces a free-space reserve, and writes files safely on exFAT (atomic writes,
 sanitized filenames). Protecting the workspace is a top-level requirement, so
 this module:
@@ -11,7 +11,7 @@ this module:
 - keeps app secrets OUT of the shared workspace.
 
 It works today against any directory (dev: storage/workspace) and, on the Live
-SSD, against the exFAT TITAN_WORKSPACE mount.
+SSD, against the exFAT ADWIN_WORKSPACE mount.
 """
 from __future__ import annotations
 
@@ -148,7 +148,7 @@ class WorkspaceManager:
     def is_writable(self) -> bool:
         if not self.is_available():
             return False
-        probe = self.root / f".titan_write_test_{os.getpid()}"
+        probe = self.root / f".adwin_write_test_{os.getpid()}"
         try:
             probe.write_bytes(b"ok")
             probe.unlink()
@@ -261,7 +261,7 @@ class WorkspaceManager:
         dest = subdir / safe_filename(filename)
 
         # Atomic: write temp in same dir, flush+fsync, then replace.
-        fd, tmp = tempfile.mkstemp(dir=str(subdir), prefix=".titan_tmp_")
+        fd, tmp = tempfile.mkstemp(dir=str(subdir), prefix=".adwin_tmp_")
         try:
             with os.fdopen(fd, "wb") as fh:
                 fh.write(data)
@@ -281,7 +281,7 @@ class WorkspaceManager:
         """Zip User_Settings (+ extra config paths) into Backups/. No secrets."""
         self.ensure_structure()
         backups = self.root / "Backups"
-        name = f"titan_settings_{time.strftime('%Y%m%d_%H%M%S')}.zip"
+        name = f"adwin_settings_{time.strftime('%Y%m%d_%H%M%S')}.zip"
         out = backups / name
         settings_dir = self.root / "User_Settings"
         with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:

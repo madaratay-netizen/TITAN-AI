@@ -1,4 +1,4 @@
-# TITAN AI — Offline Mode & Privacy
+# ADWIN OS — Offline Mode & Privacy
 
 Normal operation is **offline-first**. Internet is used only in an explicit
 **online/download mode** for obtaining software and models.
@@ -11,7 +11,7 @@ Normal operation is **offline-first**. Internet is used only in an explicit
 - AI inference is local only (Ollama/llama.cpp/ComfyUI on loopback).
 
 ## Three distinct states (reported honestly, never conflated)
-- **`no_internet_requirement`** — TITAN works without internet (by design).
+- **`no_internet_requirement`** — ADWIN works without internet (by design).
 - **`no_network_connectivity`** — this host currently has no link.
 - **`fully_isolated`** — verified no outbound traffic. **Claimed only after an
   external packet-capture test**, never asserted by the app alone.
@@ -35,7 +35,7 @@ and [SECURITY.md](SECURITY.md)).
 ## Secrets & logs
 - API keys / passwords are **never written to logs**.
 - No plaintext secrets on the Windows-visible workspace; app secrets live on
-  `TITAN_SYSTEM`.
+  `ADWIN_SYSTEM`.
 
 ## Offline verification test
 `scripts/offline_test.py` checks, and reports PASS/FAIL/SKIP honestly:

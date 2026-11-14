@@ -69,7 +69,7 @@ def test_tts_produces_real_audio(tmp_path):
     if not caps.tts_available:
         pytest.skip("no TTS engine available")
     out = tmp_path / "out.wav"
-    r = tts.synthesize("TITAN voice test.", str(out))
+    r = tts.synthesize("ADWIN voice test.", str(out))
     assert out.exists() and out.stat().st_size > 0
     assert r.duration_s > 0
 

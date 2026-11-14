@@ -1,4 +1,4 @@
-"""TITAN AI — Code Animation Renderer.
+"""ADWIN OS — Code Animation Renderer.
 
 Renders a DETERMINISTIC code animation (HTML/Canvas/SVG) to MP4 by capturing
 frames with a headless browser, then assembling with FFmpeg. Fully offline, no
@@ -6,9 +6,9 @@ GPU, no AI model. This is the engineering-explainer technique (precise,
 reproducible 2.5D visuals) — the opposite of AI image generation.
 
 Animation contract — the HTML page must define:
-    window.TITAN_DURATION  : number   (seconds)
+    window.ADWIN_DURATION  : number   (seconds)
     window.seekTo(t)       : function (render the exact frame at time t seconds)
-    window.TITAN_FPS       : number   (optional; default 30)
+    window.ADWIN_FPS       : number   (optional; default 30)
 
 Because every frame is a pure function of `t`, the output is reproducible and
 exact — ideal for engineering diagrams, production lines, and labelled parts.
@@ -61,7 +61,7 @@ def render_html_animation(html_path: str, out_path: str, width: int = 1280,
         raise AnimationError(f"HTML not found: {html_path}")
     out = Path(out_path)
     out.parent.mkdir(parents=True, exist_ok=True)
-    frames_dir = Path(tempfile.mkdtemp(prefix="titan_anim_"))
+    frames_dir = Path(tempfile.mkdtemp(prefix="adwin_anim_"))
 
     try:
         with sync_playwright() as p:
@@ -72,9 +72,9 @@ def render_html_animation(html_path: str, out_path: str, width: int = 1280,
             # Wait for the animation contract to be ready.
             page.wait_for_function(
                 "typeof window.seekTo==='function' && "
-                "typeof window.TITAN_DURATION==='number'", timeout=load_timeout_ms)
-            duration = float(page.evaluate("window.TITAN_DURATION"))
-            use_fps = int(page.evaluate("window.TITAN_FPS || 0") or fps)
+                "typeof window.ADWIN_DURATION==='number'", timeout=load_timeout_ms)
+            duration = float(page.evaluate("window.ADWIN_DURATION"))
+            use_fps = int(page.evaluate("window.ADWIN_FPS || 0") or fps)
             total = max(1, int(round(duration * use_fps)))
             for f in range(total):
                 page.evaluate("(t) => window.seekTo(t)", f / use_fps)

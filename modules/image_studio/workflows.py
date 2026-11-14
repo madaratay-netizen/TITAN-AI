@@ -1,4 +1,4 @@
-"""TITAN AI — Image Studio ComfyUI workflow builders.
+"""ADWIN OS — Image Studio ComfyUI workflow builders.
 
 Produces real ComfyUI API-format graphs (node-id -> {class_type, inputs}) that
 ComfyUI's /prompt endpoint executes. These are the standard SD/SDXL graphs, not
@@ -32,7 +32,7 @@ class GenParams:
     scheduler: str = "normal"
     seed: int = 0
     batch_size: int = 1
-    filename_prefix: str = "TITAN"
+    filename_prefix: str = "ADWIN"
 
     def validate(self) -> None:
         if not self.prompt.strip():

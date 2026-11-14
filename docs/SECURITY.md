@@ -1,4 +1,4 @@
-# TITAN AI — Security
+# ADWIN OS — Security
 
 ## Principles
 - **Local-first, loopback-only** by default; no telemetry; no hidden network.
@@ -25,7 +25,7 @@
 
 ## Secrets
 - API keys / passwords are never logged and never stored in plaintext on the
-  Windows-visible `TITAN_WORKSPACE`. App secrets live on `TITAN_SYSTEM`.
+  Windows-visible `ADWIN_WORKSPACE`. App secrets live on `ADWIN_SYSTEM`.
 
 ## Disk operations
 - Never automatic. Enumerate → identify by **model + size + bus** (serial is
@@ -34,8 +34,8 @@
 - Host internal drives and the Windows bootloader are **out of scope**.
 
 ## Updates
-- Target `TITAN_SYSTEM`/`TITAN_BOOT` only; refuse any op resolving to
-  `TITAN_WORKSPACE`; back up config first; verify integrity before applying.
+- Target `ADWIN_SYSTEM`/`ADWIN_BOOT` only; refuse any op resolving to
+  `ADWIN_WORKSPACE`; back up config first; verify integrity before applying.
 
 ## Input handling
 - Workspace filenames sanitized for exFAT/Windows; atomic writes prevent

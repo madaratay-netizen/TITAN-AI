@@ -1,4 +1,4 @@
-"""TITAN AI — Developer Lab coding assistant.
+"""ADWIN OS — Developer Lab coding assistant.
 
 Code generation / explanation / review / debugging via a local LLM. Prefers a
 dedicated coding model (e.g. qwen2.5-coder) when installed, otherwise uses the
@@ -13,7 +13,7 @@ from modules.chat import ollama_client
 CODING_MODEL_HINTS = ("coder", "code", "deepseek", "qwen2.5-coder")
 
 GEN_SYSTEM = (
-    "You are TITAN Developer Lab, a local coding assistant. Produce correct, "
+    "You are ADWIN Developer Lab, a local coding assistant. Produce correct, "
     "idiomatic code. Return the code in a single fenced block with the right "
     "language tag, then a brief explanation. Never claim to have run the code."
 )

@@ -4,14 +4,14 @@
 </head><body>
 <canvas id="c" width="1280" height="720"></canvas>
 <script>
-/* TITAN scene composition framework.
-   The model only produces TITAN_SCENE (JSON). The visual quality lives HERE:
+/* ADWIN scene composition framework.
+   The model only produces ADWIN_SCENE (JSON). The visual quality lives HERE:
    a reusable component library + deterministic seekTo(t) animation. */
-window.TITAN_SCENE = __TITAN_SCENE_JSON__;
+window.ADWIN_SCENE = __ADWIN_SCENE_JSON__;
 
-const SCENE = window.TITAN_SCENE || {components:[],pipes:[],duration:8};
-window.TITAN_DURATION = SCENE.duration || 8;
-window.TITAN_FPS = 30;
+const SCENE = window.ADWIN_SCENE || {components:[],pipes:[],duration:8};
+window.ADWIN_DURATION = SCENE.duration || 8;
+window.ADWIN_FPS = 30;
 
 const cv=document.getElementById('c'), ctx=cv.getContext('2d'), W=cv.width, H=cv.height;
 const byId={}; (SCENE.components||[]).forEach(c=>byId[c.id]=c);
@@ -198,7 +198,7 @@ window.seekTo=function(t){
   ctx.font='bold 38px "Segoe UI",Tahoma,Arial';ctx.fillStyle='#36d399';ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=10;
   ctx.fillText(SCENE.title||'',W/2,52);
   ctx.font='17px "Segoe UI",Arial';ctx.fillStyle='#8aa0b4';ctx.shadowBlur=0;
-  ctx.fillText(SCENE.subtitle||'TITAN AI',W/2,76);ctx.restore();
+  ctx.fillText(SCENE.subtitle||'ADWIN OS',W/2,76);ctx.restore();
 };
 window.seekTo(0);
 </script></body></html>

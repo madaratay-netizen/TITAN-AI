@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# TITAN AI — mount the persistent partitions and verify the workspace (Linux).
+# ADWIN OS — mount the persistent partitions and verify the workspace (Linux).
 # Mounts by LABEL (never by a guessed /dev name). Creates the workspace folder
 # structure if missing. Read/verify only — it never formats anything.
 set -euo pipefail
 
 ws_dir="/workspace"
-sys_dir="/opt/titan"
-models_dir="/opt/titan/models"
+sys_dir="/opt/adwin"
+models_dir="/opt/adwin/models"
 
 mount_label() {
   local label="$1" target="$2" opts="${3:-}"
@@ -24,18 +24,18 @@ mount_label() {
   fi
 }
 
-mount_label TITAN_SYSTEM    "$sys_dir"
-mount_label TITAN_MODELS    "$models_dir"
+mount_label ADWIN_SYSTEM    "$sys_dir"
+mount_label ADWIN_MODELS    "$models_dir"
 # exFAT: no POSIX perms; give everyone rw via mount options.
-mount_label TITAN_WORKSPACE "$ws_dir" "uid=1000,gid=1000,umask=000"
+mount_label ADWIN_WORKSPACE "$ws_dir" "uid=1000,gid=1000,umask=000"
 
 if mountpoint -q "$ws_dir"; then
   for d in Images Videos Audio Documents Code Projects AI_Conversations \
            Exports Imports Backups User_Settings; do
     mkdir -p "$ws_dir/$d"
   done
-  echo "TITAN_WORKSPACE ready at $ws_dir"
+  echo "ADWIN_WORKSPACE ready at $ws_dir"
 else
-  echo "ERROR: TITAN_WORKSPACE is not mounted — outputs cannot be saved." >&2
+  echo "ERROR: ADWIN_WORKSPACE is not mounted — outputs cannot be saved." >&2
   exit 1
 fi

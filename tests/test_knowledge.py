@@ -53,7 +53,7 @@ def test_store_ingest_and_search(tmp_path):
     db = tmp_path / "kc.db"
     store = VectorStore(db)
     e = LexicalEmbedder()
-    texts = ["TITAN runs fully offline on an external SSD.",
+    texts = ["ADWIN runs fully offline on an external SSD.",
              "The honey filling line uses a dosing pump.",
              "Fire pumps must maintain 7 bar pressure."]
     chunks = [(i, t, e.embed([t])[0]) for i, t in enumerate(texts)]

@@ -1,4 +1,4 @@
-"""TITAN AI — IT & Cyber Lab diagnostics (defensive/read-only).
+"""ADWIN OS — IT & Cyber Lab diagnostics (defensive/read-only).
 
 System resource monitoring, disk health, network interface analysis, and
 IP/DNS diagnostics. All functions are read-only and local; none modify the

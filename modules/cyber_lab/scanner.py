@@ -1,4 +1,4 @@
-"""TITAN AI — IT & Cyber Lab port checker (authorized, defensive only).
+"""ADWIN OS — IT & Cyber Lab port checker (authorized, defensive only).
 
 A plain TCP *connect* check against a single host, for verifying which local/
 authorized services are listening. This is deliberately NOT an offensive tool:
@@ -30,7 +30,7 @@ COMMON_PORTS: dict[int, str] = {
     110: "pop3", 139: "netbios", 143: "imap", 443: "https", 445: "smb",
     465: "smtps", 587: "submission", 631: "ipp", 993: "imaps", 995: "pop3s",
     1433: "mssql", 3306: "mysql", 3389: "rdp", 5432: "postgres", 5900: "vnc",
-    6379: "redis", 8000: "http-alt", 8077: "titan-api", 8080: "http-proxy",
+    6379: "redis", 8000: "http-alt", 8077: "adwin-api", 8080: "http-proxy",
     8443: "https-alt", 9000: "http-alt", 11434: "ollama",
 }
 

@@ -1,8 +1,8 @@
-"""TITAN AI — IT & Cyber Lab log analysis (read-only).
+"""ADWIN OS — IT & Cyber Lab log analysis (read-only).
 
 Summarizes a log by severity, surfaces the most recent errors, and flags
 frequent error signatures. Accepts pasted text, or a file confined to an
-allowed directory (defaults to the TITAN storage dir).
+allowed directory (defaults to the ADWIN storage dir).
 """
 from __future__ import annotations
 

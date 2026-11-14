@@ -1,11 +1,11 @@
-# TITAN AI — Installation & Deployment Guide
+# ADWIN OS — Installation & Deployment Guide
 
 Two tracks:
 
 - **A. Development / run the engine now** — works today on Windows, macOS, or Linux.
 - **B. SSD deployment** — the portable Live-Linux target (documented; never automated).
 
-> ⚠️ **Safety first.** TITAN never formats a disk automatically and never writes to
+> ⚠️ **Safety first.** ADWIN never formats a disk automatically and never writes to
 > your computer's internal drives. Every destructive step requires you to confirm
 > the exact target device. Read [scripts/README.md](scripts/README.md) before running
 > any disk script.
@@ -18,7 +18,7 @@ Two tracks:
 
 ```bash
 # 1. Zero-dependency system report — runs with just Python:
-python scripts/titan_report.py
+python scripts/adwin_report.py
 
 # 2. Install backend deps into a virtual environment:
 python -m venv .venv
@@ -30,7 +30,7 @@ pip install -r requirements.txt
 ollama serve &                    # if not already running
 ollama pull qwen3.5:4b            # ~3.3 GB (skip if already installed)
 
-# 4. Start the TITAN backend + dashboard (loopback only):
+# 4. Start the ADWIN backend + dashboard (loopback only):
 uvicorn backend.app.main:app --host 127.0.0.1 --port 8077
 
 # 5. Open the dashboard:
@@ -57,21 +57,21 @@ Full detail in [docs/STORAGE_LAYOUT.md](docs/STORAGE_LAYOUT.md).
 
 | # | Label | FS | Size (GiB) | Windows | Purpose |
 |---|---|---|---:|:--:|---|
-| 1 | `TITAN_EFI` | FAT32 | 1 | shown | UEFI boot (ESP), GRUB on the SSD only |
-| 2 | `TITAN_BOOT` | ext4 | 21 | no | Live base (read-only SquashFS) + boot files |
-| 3 | `TITAN_SYSTEM` | ext4 | 14 | no | Persistent app/runtime, deps, config, logs + overlay |
-| 4 | `TITAN_MODELS` | ext4 | 23 | no | Optional AI model weights |
-| 5 | `TITAN_WORKSPACE` | **exFAT** | 52 | **yes** | **User outputs — cross-OS, protected** |
+| 1 | `ADWIN_EFI` | FAT32 | 1 | shown | UEFI boot (ESP), GRUB on the SSD only |
+| 2 | `ADWIN_BOOT` | ext4 | 21 | no | Live base (read-only SquashFS) + boot files |
+| 3 | `ADWIN_SYSTEM` | ext4 | 14 | no | Persistent app/runtime, deps, config, logs + overlay |
+| 4 | `ADWIN_MODELS` | ext4 | 23 | no | Optional AI model weights |
+| 5 | `ADWIN_WORKSPACE` | **exFAT** | 52 | **yes** | **User outputs — cross-OS, protected** |
 | — | free | — | ~8.2 | — | Recovery buffer + over-provisioning |
 
-- **exFAT** on `TITAN_WORKSPACE` is deliberate: read/write on **both Linux and
+- **exFAT** on `ADWIN_WORKSPACE` is deliberate: read/write on **both Linux and
   Windows**, handles large video files, and keeps your outputs accessible without
   booting Linux. It is a **separate partition** so it survives system updates,
   recovery, and Live rebuilds.
-- `TITAN_MODELS`/`TITAN_SYSTEM` are **ext4** (perms/symlinks that model runtimes
+- `ADWIN_MODELS`/`ADWIN_SYSTEM` are **ext4** (perms/symlinks that model runtimes
   and Python envs need; exFAT can't provide them).
 - Large **video** models are **not** installed by default; they belong on
-  `TITAN_MODELS` or an optional second external drive. The storage manager warns
+  `ADWIN_MODELS` or an optional second external drive. The storage manager warns
   before any download that would breach free-space reserves.
 - These are **planning targets**. The installer presents the computed plan from
   the SSD's *actual* usable capacity and asks for approval before writing anything.
@@ -87,7 +87,7 @@ UEFI-compatible, with Secure Boot compatibility tested separately.
 2. **Confirm the target** — you type the exact device path; the script re-reads
    and shows you what will be erased and requires an explicit `YES`.
 3. **Partition** per the plan above (or the capacity-adjusted plan).
-4. **Install** the base OS to LIVE, mount AI/SHARED/EXTRA, and deploy TITAN.
+4. **Install** the base OS to LIVE, mount AI/SHARED/EXTRA, and deploy ADWIN.
 5. **First-run wizard** detects hardware, classifies the profile, proposes a
    storage plan, and offers to pull the primary LLM (`qwen3.5:4b`) on demand.
 6. **Offline hardening** — local-only binding + firewall rules; then run the

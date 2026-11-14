@@ -1,4 +1,4 @@
-"""TITAN AI — Voice Studio subtitle generation.
+"""ADWIN OS — Voice Studio subtitle generation.
 
 Converts timed transcription segments into SRT and WebVTT. Pure standard
 library and fully deterministic.

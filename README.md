@@ -1,4 +1,4 @@
-# TITAN AI — Portable Offline Intelligence & Creative Studio
+# ADWIN OS — Portable Offline Intelligence & Creative Studio
 
 A portable, **offline-first** AI workstation that runs local models (chat today;
 image/voice/video/knowledge as hardware and later phases allow) with **no cloud,
@@ -11,7 +11,7 @@ any compatible x86-64 PC without touching the host's internal drives.
 > [docs/PHASE_REPORT.md](docs/PHASE_REPORT.md).
 
 > 🌍 **جديد على المشروع؟ ابدأ من هنا (بالعربي، للمبتدئين):**
-> **[TITAN AI — الحكاية كاملة ببساطة](docs/BEGINNERS_GUIDE_AR.md)**
+> **[ADWIN OS — الحكاية كاملة ببساطة](docs/BEGINNERS_GUIDE_AR.md)**
 
 ## What works right now
 - **Hardware detection** — real CPU/RAM/GPU/VRAM/disk/accel probing (Win + Linux).
@@ -42,7 +42,7 @@ any compatible x86-64 PC without touching the host's internal drives.
   **FFmpeg** render (title/clip/image scenes, TTS narration, subtitles, music) to
   MP4. Works offline on modest hardware; AI clip generation is optional and
   hardware-gated (never faked).
-- **Storage Manager** — creates & guards the exFAT `TITAN_WORKSPACE`: capacity/
+- **Storage Manager** — creates & guards the exFAT `ADWIN_WORKSPACE`: capacity/
   health, a free-space reserve, exFAT-safe atomic writes, backup/restore.
 - **Dashboard** — live hardware, profile, models, and a working chat, loopback-only.
 - **Offline manager** — honest network-state reporting with three isolation levels.
@@ -50,7 +50,7 @@ any compatible x86-64 PC without touching the host's internal drives.
 
 ## Quickstart
 ```bash
-python scripts/titan_report.py          # zero-dependency system report
+python scripts/adwin_report.py          # zero-dependency system report
 pip install -r requirements.txt
 uvicorn backend.app.main:app --host 127.0.0.1 --port 8077
 # open http://127.0.0.1:8077
@@ -63,20 +63,20 @@ uvicorn backend.app.main:app --host 127.0.0.1 --port 8077
 - [INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md) — dev quickstart + SSD deployment
 
 Target SSD: **128 GB (119.24 GiB usable)**; user outputs live on a separate
-exFAT **`TITAN_WORKSPACE`** partition, readable from Windows and Linux.
+exFAT **`ADWIN_WORKSPACE`** partition, readable from Windows and Linux.
 
 ## Repository layout
 ```
-TITAN-AI/
+ADWIN-OS/
 ├── core/            # Adaptive Intelligence Engine (detection, profiles, registry, offline)
 ├── backend/         # FastAPI API + config
 ├── frontend/        # Dashboard (static, API-driven)
 ├── modules/         # chat (live) · image/video/voice/knowledge/dev/cyber (planned)
 ├── infrastructure/  # linux / docker / firewall / boot
-├── scripts/         # titan_report, disk identification (confirmation-gated), offline test
+├── scripts/         # adwin_report, disk identification (confirmation-gated), offline test
 ├── tests/           # pytest
 ├── docs/            # architecture, phase report
-├── configs/         # titan.toml (offline + loopback by default)
+├── configs/         # adwin.toml (offline + loopback by default)
 ├── models/ storage/ # local weights (gitignored) + persistent state
 └── docker-compose.yml  requirements.txt  README.md  INSTALLATION_GUIDE.md
 ```
@@ -87,7 +87,7 @@ feature, not the system) · honest (no fake output, no untested "passes") · FOS
 with license review · portable & persistent.
 
 ## License & models
-TITAN's own code is **MIT-licensed** — see [LICENSE](LICENSE). Third-party
+ADWIN's own code is **MIT-licensed** — see [LICENSE](LICENSE). Third-party
 components and AI model weights keep their own licenses — see
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md); the model registry records each
 model's license. Review before redistribution. Model weights are never committed.

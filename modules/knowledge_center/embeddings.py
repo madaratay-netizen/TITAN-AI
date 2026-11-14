@@ -1,4 +1,4 @@
-"""TITAN AI — local embeddings for RAG.
+"""ADWIN OS — local embeddings for RAG.
 
 Two backends, both fully offline:
 

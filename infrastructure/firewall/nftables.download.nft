@@ -1,13 +1,13 @@
 #!/usr/sbin/nft -f
-# TITAN AI — DOWNLOAD MODE (DNS + HTTP/HTTPS outbound)
+# ADWIN OS — DOWNLOAD MODE (DNS + HTTP/HTTPS outbound)
 flush ruleset
 
-table inet titan {
+table inet adwin {
     chain input {
         type filter hook input priority 0; policy drop;
         ct state established,related accept
         iif "lo" accept
-        # TITAN services bind to loopback only; no inbound needed.
+        # ADWIN services bind to loopback only; no inbound needed.
     }
     chain forward {
         type filter hook forward priority 0; policy drop;
@@ -20,6 +20,6 @@ table inet titan {
         udp dport 53 accept
         tcp dport 53 accept
         tcp dport { 80, 443 } accept
-        counter log prefix "titan-egress-drop " drop
+        counter log prefix "adwin-egress-drop " drop
     }
 }

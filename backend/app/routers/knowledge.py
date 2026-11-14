@@ -1,4 +1,4 @@
-"""TITAN AI — Knowledge Center API routes (local RAG)."""
+"""ADWIN OS — Knowledge Center API routes (local RAG)."""
 from __future__ import annotations
 
 from pathlib import Path

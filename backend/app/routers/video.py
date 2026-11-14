@@ -1,4 +1,4 @@
-"""TITAN AI — Video Studio API routes (scene-based FFmpeg production)."""
+"""ADWIN OS — Video Studio API routes (scene-based FFmpeg production)."""
 from __future__ import annotations
 
 import re

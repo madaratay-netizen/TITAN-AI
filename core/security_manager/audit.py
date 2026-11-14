@@ -1,4 +1,4 @@
-"""TITAN AI — offline/privacy configuration audit.
+"""ADWIN OS — offline/privacy configuration audit.
 
 Checks the running configuration against the offline-first security posture and
 reports each item as pass / warn / fail with a short explanation. Pure logic —
@@ -65,7 +65,7 @@ def audit(settings) -> AuditResult:
           f"AI endpoint {settings.ollama_host}" +
           ("" if _is_loopback(settings.ollama_host) else " is NOT local!"))
 
-    # TITAN ships no telemetry and makes no automatic outbound calls.
+    # ADWIN ships no telemetry and makes no automatic outbound calls.
     r.add("no_telemetry", "pass",
           "No telemetry or automatic data upload in the codebase.")
     r.add("no_auto_model_download", "pass",

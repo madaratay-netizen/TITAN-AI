@@ -1,4 +1,4 @@
-"""TITAN AI — Knowledge Center RAG orchestrator.
+"""ADWIN OS — Knowledge Center RAG orchestrator.
 
 Ingests documents into per-project libraries and answers questions using only
 retrieved local context, with source references. Everything is local:
@@ -17,7 +17,7 @@ from modules.knowledge_center.vector_store import VectorStore, Hit
 from modules.chat import ollama_client
 
 RAG_SYSTEM = (
-    "You are TITAN AI's Knowledge Center. Answer the user's question using ONLY "
+    "You are ADWIN OS's Knowledge Center. Answer the user's question using ONLY "
     "the provided context passages. Cite the sources you used by their [n] "
     "marker. If the answer is not in the context, say you don't have that "
     "information in the knowledge base. Be concise and accurate."

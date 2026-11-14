@@ -1,8 +1,8 @@
-# TITAN AI — scripts
+# ADWIN OS — scripts
 
 | Script | What it does | Writes to disk? |
 |---|---|---|
-| `titan_report.py` | Full hardware + profile + model-compatibility report (zero deps). | No |
+| `adwin_report.py` | Full hardware + profile + model-compatibility report (zero deps). | No |
 | `offline_test.py` | Offline Verification Test — PASS/FAIL/SKIP per check. | No (reads only) |
 | `identify_disk.sh` | Lists **external** block devices to help identify the target SSD (Linux). Refuses the system disk. | **No — read-only** |
 
@@ -15,7 +15,7 @@
 
 ## Usage
 ```bash
-python scripts/titan_report.py          # or --json
+python scripts/adwin_report.py          # or --json
 python scripts/offline_test.py
 bash   scripts/identify_disk.sh         # Linux target only
 ```

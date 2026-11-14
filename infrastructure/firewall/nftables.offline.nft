@@ -1,13 +1,13 @@
 #!/usr/sbin/nft -f
-# TITAN AI — STRICT OFFLINE (no outbound except loopback)
+# ADWIN OS — STRICT OFFLINE (no outbound except loopback)
 flush ruleset
 
-table inet titan {
+table inet adwin {
     chain input {
         type filter hook input priority 0; policy drop;
         ct state established,related accept
         iif "lo" accept
-        # TITAN services bind to loopback only; no inbound needed.
+        # ADWIN services bind to loopback only; no inbound needed.
     }
     chain forward {
         type filter hook forward priority 0; policy drop;

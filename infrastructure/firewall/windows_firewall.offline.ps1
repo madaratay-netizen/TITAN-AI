@@ -1,7 +1,7 @@
-# TITAN AI — block outbound for the app (run as Administrator).
-# Blocks only TITAN's own executables, not the whole system.
-$app = 'C:\TITAN-AI'
+# ADWIN OS — block outbound for the app (run as Administrator).
+# Blocks only ADWIN's own executables, not the whole system.
+$app = 'C:\ADWIN-OS'
 Get-ChildItem -Path $app -Recurse -Include *.exe | ForEach-Object {
-  New-NetFirewallRule -DisplayName "TITAN-block-$($_.Name)" -Direction Outbound -Program $_.FullName -Action Block -Profile Any -ErrorAction SilentlyContinue | Out-Null
+  New-NetFirewallRule -DisplayName "ADWIN-block-$($_.Name)" -Direction Outbound -Program $_.FullName -Action Block -Profile Any -ErrorAction SilentlyContinue | Out-Null
 }
-Write-Output 'TITAN outbound blocked. Remove with the download-mode script.'
+Write-Output 'ADWIN outbound blocked. Remove with the download-mode script.'

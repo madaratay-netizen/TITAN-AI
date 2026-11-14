@@ -1,4 +1,4 @@
-# TITAN AI — backend runtime dependencies (version-pinned).
+# ADWIN OS — backend runtime dependencies (version-pinned).
 # Core engine (detector/adaptive/registry/offline) needs NONE of these — it
 # runs on the Python standard library. These power the API + tests.
 fastapi==0.115.6

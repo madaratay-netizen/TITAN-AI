@@ -83,7 +83,7 @@ def test_safe_write_atomic(tmp_path):
     with open(path, "rb") as f:
         assert f.read() == b"\x89PNG data"
     # No leftover temp files.
-    leftovers = list((tmp_path / "ws" / "Images").glob(".titan_tmp_*"))
+    leftovers = list((tmp_path / "ws" / "Images").glob(".adwin_tmp_*"))
     assert leftovers == []
 
 

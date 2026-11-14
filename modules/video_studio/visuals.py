@@ -1,4 +1,4 @@
-"""TITAN AI — Video Studio scene visuals (AI image per scene).
+"""ADWIN OS — Video Studio scene visuals (AI image per scene).
 
 Generates a real image for each scene from its description using the local
 ComfyUI image backend, then attaches it to the scene so the FFmpeg assembler

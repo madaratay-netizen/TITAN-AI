@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""TITAN AI — system report CLI.
+"""ADWIN OS — system report CLI.
 
 Runs the full Adaptive Intelligence Engine against the current machine and
 prints a human-readable report (add --json for machine output). Uses only the
 Python standard library, so it runs with zero installs.
 
-    python scripts/titan_report.py
-    python scripts/titan_report.py --json
+    python scripts/adwin_report.py
+    python scripts/adwin_report.py --json
 """
 from __future__ import annotations
 
@@ -32,7 +32,7 @@ BAR = "─" * 68
 def human(report, result, models, oll, net) -> str:
     g = report.best_gpu
     lines = [
-        "", "TITAN AI — SYSTEM REPORT", BAR,
+        "", "ADWIN OS — SYSTEM REPORT", BAR,
         f"OS        : {report.os_name} ({report.arch})",
         f"CPU       : {report.cpu.model.strip()}  "
         f"[{report.cpu.physical_cores}C/{report.cpu.logical_cores}T "
@@ -73,7 +73,7 @@ def human(report, result, models, oll, net) -> str:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="TITAN AI system report")
+    ap = argparse.ArgumentParser(description="ADWIN OS system report")
     ap.add_argument("--json", action="store_true", help="emit JSON")
     ap.add_argument("--offline", action="store_true", default=True,
                     help="treat offline mode as enabled (default)")

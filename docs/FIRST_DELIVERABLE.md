@@ -1,4 +1,4 @@
-# TITAN AI — First Deliverable (Design Brief)
+# ADWIN OS — First Deliverable (Design Brief)
 
 This document answers the eight items the brief requires **before** further
 implementation (§15). It reflects the **actual** target device measured on
@@ -44,11 +44,11 @@ serial unreliable (all-zeros)**. Full detail + mount table in
 
 | # | Label | FS | Size | Windows-visible | Purpose |
 |---|---|---|---:|:--:|---|
-| 1 | `TITAN_EFI` | FAT32 | 1 | yes* | UEFI boot (ESP) |
-| 2 | `TITAN_BOOT` | ext4 | 21 | no | Live base (squashfs, read-only) + boot files |
-| 3 | `TITAN_SYSTEM` | ext4 | 14 | no | Persistent app runtime, deps, config, logs, app DBs + writable overlay |
-| 4 | `TITAN_MODELS` | ext4 | 23 | no | Optional AI model weights |
-| 5 | `TITAN_WORKSPACE` | **exFAT** | 52 | **yes** | **User outputs — survives updates/rebuilds** |
+| 1 | `ADWIN_EFI` | FAT32 | 1 | yes* | UEFI boot (ESP) |
+| 2 | `ADWIN_BOOT` | ext4 | 21 | no | Live base (squashfs, read-only) + boot files |
+| 3 | `ADWIN_SYSTEM` | ext4 | 14 | no | Persistent app runtime, deps, config, logs, app DBs + writable overlay |
+| 4 | `ADWIN_MODELS` | ext4 | 23 | no | Optional AI model weights |
+| 5 | `ADWIN_WORKSPACE` | **exFAT** | 52 | **yes** | **User outputs — survives updates/rebuilds** |
 | — | (free) | — | ~8.2 | — | Recovery buffer + SSD over-provisioning |
 
 Totals to 111 GiB allocated, ~8.2 GiB left free for safety. These are planning
@@ -122,12 +122,12 @@ Installed only on explicit approval + storage/hardware checks: image models
 (SDXL/FLUX) and ComfyUI, **all video generation models (LTX/Wan/Hunyuan)**,
 larger LLMs, `faster-whisper`/whisper.cpp models, Piper Arabic voices, GPU
 driver stacks (CUDA/ROCm). Default install stays lightweight for the 128 GB SSD;
-large models may live on `TITAN_MODELS` or an additional external drive.
+large models may live on `ADWIN_MODELS` or an additional external drive.
 
 ---
 
 **Next implementation step (per §15, after this plan):** the **Storage /
-Workspace Manager** — create & guard `TITAN_WORKSPACE`, capacity/health
+Workspace Manager** — create & guard `ADWIN_WORKSPACE`, capacity/health
 reporting, low-space warnings, exFAT-safe atomic writes — because *protecting
-TITAN_WORKSPACE is a top-level requirement*. Then the Live-boot build + the
+ADWIN_WORKSPACE is a top-level requirement*. Then the Live-boot build + the
 confirmation-gated partition tooling.

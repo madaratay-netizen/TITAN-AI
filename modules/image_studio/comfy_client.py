@@ -1,6 +1,6 @@
-"""TITAN AI — Image Studio ComfyUI client.
+"""ADWIN OS — Image Studio ComfyUI client.
 
-A real client for the ComfyUI HTTP API (the engine TITAN uses for image
+A real client for the ComfyUI HTTP API (the engine ADWIN uses for image
 generation). It submits actual workflow graphs and retrieves the real images
 ComfyUI produces. It NEVER fabricates or substitutes placeholder images: if
 ComfyUI is not running, callers get an honest "unavailable" result.

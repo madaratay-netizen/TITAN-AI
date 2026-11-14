@@ -1,4 +1,4 @@
-# TITAN AI — Model Management
+# ADWIN OS — Model Management
 
 Models are **never downloaded automatically** and **never large by default**.
 The model registry (`core/model_registry/`) records, per model: name, family,
@@ -11,7 +11,7 @@ adaptive engine.
 - See whether a model is **compatible with the current hardware**
   (`ok` / `cpu_only` / `incompatible`).
 - Download a model manually (with a free-space check first).
-- Remove a model; select a default; store models on `TITAN_MODELS` or another
+- Remove a model; select a default; store models on `ADWIN_MODELS` or another
   external drive.
 
 ## Default footprint (lightweight for 128 GB)

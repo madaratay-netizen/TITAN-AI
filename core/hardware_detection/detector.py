@@ -1,9 +1,9 @@
-"""TITAN AI — Hardware Detection
+"""ADWIN OS — Hardware Detection
 
 Detects real CPU / RAM / storage / GPU / acceleration-backend facts on the
 machine it runs on. Works on Windows (development) and Linux (SSD target).
 
-Design rules (per TITAN engineering rules):
+Design rules (per ADWIN engineering rules):
 - Never assume a GPU, VRAM amount, or RAM size. Measure it.
 - Never crash the whole system if one probe fails; degrade and record why.
 - Use psutil when available for richer data, but keep working without it so

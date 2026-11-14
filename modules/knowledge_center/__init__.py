@@ -1,1 +1,1 @@
-# TITAN AI — Knowledge Center (RAG) package
+# ADWIN OS — Knowledge Center (RAG) package

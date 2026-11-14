@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# TITAN AI — build the Live image (reviewed template, run on a DEV BOX only).
+# ADWIN OS — build the Live image (reviewed template, run on a DEV BOX only).
 #
 # Produces a reproducible Ubuntu 24.04 Live image (read-only SquashFS base +
-# TITAN baked in) that boots from the SSD. This runs on a development machine or
+# ADWIN baked in) that boots from the SSD. This runs on a development machine or
 # VM and writes ONLY to ./build — it never touches the user's SSD or any disk.
-# After building, flash the image artifacts onto TITAN_BOOT and install GRUB to
-# TITAN_EFI with the (separate) confirmation-gated installer.
+# After building, flash the image artifacts onto ADWIN_BOOT and install GRUB to
+# ADWIN_EFI with the (separate) confirmation-gated installer.
 set -euo pipefail
 
 BUILD_DIR="${1:-./build}"
@@ -27,30 +27,30 @@ lb config \
   --architecture "$ARCH" \
   --binary-images iso-hybrid \
   --debian-installer none \
-  --bootappend-live "boot=live components quiet splash persistence persistence-label=TITAN_SYSTEM"
+  --bootappend-live "boot=live components quiet splash persistence persistence-label=ADWIN_SYSTEM"
 
 # 2. Package selection kept lightweight for a 128 GB SSD.
 mkdir -p config/package-lists
-cat > config/package-lists/titan.list.chroot <<'PKGS'
+cat > config/package-lists/adwin.list.chroot <<'PKGS'
 xfce4 xfce4-terminal network-manager
 python3 python3-venv python3-pip
 ffmpeg exfatprogs
 PKGS
 
-# 3. Bake TITAN into the image under /opt/titan (copied at build time).
-mkdir -p config/includes.chroot/opt/titan
-echo "# TITAN AI app is copied here during the image build."     \
-     > config/includes.chroot/opt/titan/README.txt
+# 3. Bake ADWIN into the image under /opt/adwin (copied at build time).
+mkdir -p config/includes.chroot/opt/adwin
+echo "# ADWIN OS app is copied here during the image build."     \
+     > config/includes.chroot/opt/adwin/README.txt
 
 # 4. Autostart the backend + dashboard on login (systemd user service).
 mkdir -p config/includes.chroot/etc/systemd/system
-cat > config/includes.chroot/etc/systemd/system/titan.service <<'UNIT'
+cat > config/includes.chroot/etc/systemd/system/adwin.service <<'UNIT'
 [Unit]
-Description=TITAN AI backend (loopback only)
+Description=ADWIN OS backend (loopback only)
 After=network.target
 [Service]
-ExecStart=/opt/titan/.venv/bin/python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8077
-WorkingDirectory=/opt/titan
+ExecStart=/opt/adwin/.venv/bin/python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8077
+WorkingDirectory=/opt/adwin
 Restart=on-failure
 [Install]
 WantedBy=multi-user.target
@@ -61,5 +61,5 @@ echo "Building Live image (this takes a while)..."
 sudo lb build
 
 echo "Done. Artifacts are in $BUILD_DIR (ISO + SquashFS)."
-echo "Next: flash onto TITAN_BOOT and install GRUB to TITAN_EFI with the"
+echo "Next: flash onto ADWIN_BOOT and install GRUB to ADWIN_EFI with the"
 echo "confirmation-gated installer. Never write to an internal disk."
