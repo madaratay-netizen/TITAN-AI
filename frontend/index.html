@@ -616,7 +616,7 @@ async function vidRender(){if(!vidProject)return;
 async function engGen(){const req=$('#eng-req').value.trim();if(!req)return;
   $('#eng-out').innerHTML='<span class="muted">الموديل بيخطّط المشهد… وبعدين الرندر (~1-2 دقيقة)…</span>';$('#eng-gen').disabled=true;
   try{const r=await kcPost('/api/video/scene',{request:req});
-    $('#eng-out').innerHTML=`<video controls src="${r.url}" style="width:100%;border-radius:8px"></video>
+    $('#eng-out').innerHTML=`<video controls src="${r.url}" preload="auto" onloadedmetadata="try{this.currentTime=Math.min(2,this.duration/2)}catch(e){}" style="width:100%;border-radius:8px"></video>
       <div class="muted" style="font-size:12px;margin-top:6px">${r.title||''} · ${(r.components||[]).join(', ')} · ${r.duration_s}s${r.has_camera?' · 🎥 كاميرا':''} · <a href="${r.url}" download style="color:var(--blue)">تحميل</a></div>`;}
   catch(e){$('#eng-out').innerHTML='<div class="card" style="border-color:#5a2a1c"><span style="color:var(--warn)">⚠ '+e.message+'</span></div>';}
   $('#eng-gen').disabled=false;}
