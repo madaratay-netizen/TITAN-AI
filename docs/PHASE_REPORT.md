@@ -120,8 +120,24 @@ and installation docs, `docker-compose.yml`, pinned `requirements.txt`.
   budget — real generation needs ComfyUI installed and ideally a ≥6 GB GPU.
 - Routes `/api/image/*` + an Image Studio dashboard view.
 
-## Phases 7, 11 — Video + hardening 🔜 planned
-Video (scene-based FFmpeg pipeline), firewall/offline hardening, storage manager.
+## Storage / Workspace Manager ✅ done & verified live (Phase 3 / brief §4)
+- `core/storage_manager/` — creates & guards `TITAN_WORKSPACE`:
+  - `ensure_structure()` — builds the 11 standard folders (Images/Videos/Audio/…).
+  - `health()` — filesystem, capacity, used %, **free-space reserve**
+    (max 2 GiB / 5%), low-space & below-reserve flags, per-folder file counts/sizes,
+    and **unavailable / read-only detection**.
+  - `safe_write()` — **atomic** (temp + fsync + rename) with reserve enforcement;
+    **exFAT-safe filenames** (invalid chars, reserved names, trailing dot/space, length).
+  - `backup_settings()` / `restore_settings()` — zip User_Settings + config, with
+    path-traversal-safe restore. **Never deletes user files.**
+- **Verified live:** health on the dev workspace (NTFS, reserve 5.67 GB); ensure
+  created all folders; a 1 PB request was refused ("would breach reserve"); backup
+  zip written; the partition plan (TITAN_EFI/BOOT/SYSTEM/MODELS/WORKSPACE) served.
+- Routes `/api/storage/*` + a Storage Manager dashboard view (health cards, folder
+  table, plan, ensure/backup actions).
+
+## Phases 7, 11 — Video + offline hardening 🔜 planned
+Video (scene-based FFmpeg pipeline) and firewall/offline network hardening.
 Scaffolded; **not implemented**.
 
 ## Phase 12 — Install/deploy/recovery/test scripts 🟡 partial
@@ -135,7 +151,7 @@ Scaffolded; **not implemented**.
 ## Tests actually run
 | Suite | Result |
 |---|---|
-| `pytest` (engine + registry + API + RAG + dev + cyber + voice + image) | **91 passed** |
+| `pytest` (engine + registry + API + RAG + dev + cyber + voice + image + storage) | **106 passed** |
 | `scripts/offline_test.py` | **5 passed, 0 failed, 0 skipped** |
 | Live API + chat (`qwen3.5:4b`) | **verified** |
 | Dashboard render (browser) | **verified** |
