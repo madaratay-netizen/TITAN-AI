@@ -41,6 +41,9 @@ say "3/6  Creating the Python environment"
 python3 -m venv .venv
 ./.venv/bin/python -m pip install --upgrade pip
 ./.venv/bin/pip install -r requirements.txt
+# Headless browser for the Code Animation Renderer (engineering explainers).
+./.venv/bin/python -m playwright install --with-deps chromium || \
+  ./.venv/bin/python -m playwright install chromium || true
 
 say "4/6  Installing Ollama (local AI runtime)"
 if ! command -v ollama >/dev/null 2>&1; then

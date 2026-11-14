@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"/>
+<style>
+  html,body{margin:0;background:#0b0f14;overflow:hidden}
+  canvas{display:block}
+</style>
+</head>
+<body>
+<canvas id="c" width="1280" height="720"></canvas>
+<script>
+// TITAN code-animation contract: deterministic frame = f(t).
+window.TITAN_DURATION = 7;   // seconds
+window.TITAN_FPS = 30;
+
+const cv = document.getElementById('c');
+const ctx = cv.getContext('2d');
+const W = cv.width, H = cv.height;
+
+function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+
+function pipe(x1,y1,x2,y2,wd,flow){
+  ctx.save();
+  ctx.lineCap='round';
+  ctx.strokeStyle='#223246'; ctx.lineWidth=wd+8; ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  ctx.strokeStyle='#2f4660'; ctx.lineWidth=wd; ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  // animated flow dashes
+  ctx.strokeStyle='#3aa0ff'; ctx.lineWidth=4; ctx.setLineDash([14,20]);
+  ctx.lineDashOffset = -flow*60;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  ctx.restore();
+}
+
+function label(x,y,ar,en,color){
+  ctx.save();
+  ctx.font='bold 26px "Segoe UI",Tahoma,Arial';
+  ctx.textAlign='center'; ctx.fillStyle=color||'#e6edf3';
+  ctx.shadowColor='rgba(0,0,0,.6)'; ctx.shadowBlur=6;
+  ctx.fillText(ar,x,y);
+  ctx.font='16px "Segoe UI",Arial'; ctx.fillStyle='#8aa0b4';
+  ctx.fillText(en,x,y+24);
+  ctx.restore();
+}
+
+window.seekTo = function(t){
+  // background
+  const g = ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,'#0d1824'); g.addColorStop(1,'#080c11');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  // grid
+  ctx.strokeStyle='rgba(58,160,255,.05)'; ctx.lineWidth=1;
+  for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+  const fade = Math.min(1, t/0.6);
+  ctx.globalAlpha = fade;
+
+  const cx=W/2, cy=H/2+20, R=130;
+
+  // suction pipe (from left) + discharge pipe (up)
+  pipe(120,cy, cx-R, cy, 34, t);
+  pipe(cx, cy-R, cx, 90, 30, t);
+
+  // pump volute body (2.5D: base shadow + body + top highlight)
+  ctx.save();
+  ctx.fillStyle='rgba(0,0,0,.45)'; ctx.beginPath();ctx.ellipse(cx,cy+R*0.78,R*1.05,R*0.3,0,0,7);ctx.fill();
+  // body
+  const bg=ctx.createLinearGradient(cx-R,cy-R,cx+R,cy+R);
+  bg.addColorStop(0,'#38506b'); bg.addColorStop(1,'#1c2c3e');
+  ctx.fillStyle=bg;
+  ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.fill();
+  ctx.lineWidth=6; ctx.strokeStyle='#5a7a90'; ctx.stroke();
+  // inner casing
+  ctx.fillStyle='#0f1922'; ctx.beginPath();ctx.arc(cx,cy,R-26,0,7);ctx.fill();
+  ctx.restore();
+
+  // rotating impeller (6 curved vanes)
+  ctx.save();
+  ctx.translate(cx,cy);
+  ctx.rotate(t*5.2);  // deterministic rotation
+  const vanes=6;
+  for(let i=0;i<vanes;i++){
+    ctx.rotate(2*Math.PI/vanes);
+    const grd=ctx.createLinearGradient(0,0,R-30,0);
+    grd.addColorStop(0,'#9fc3e6'); grd.addColorStop(1,'#3aa0ff');
+    ctx.strokeStyle=grd; ctx.lineWidth=9; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(14,0);
+    ctx.quadraticCurveTo((R-40)*0.6,18,(R-34),6); ctx.stroke();
+  }
+  // hub
+  ctx.fillStyle='#cfe3f5'; ctx.beginPath();ctx.arc(0,0,16,0,7);ctx.fill();
+  ctx.fillStyle='#2f4660'; ctx.beginPath();ctx.arc(0,0,7,0,7);ctx.fill();
+  ctx.restore();
+
+  // flange bolts (static detail)
+  ctx.fillStyle='#4a6a90';
+  for(let i=0;i<12;i++){const a=i/12*2*Math.PI;ctx.beginPath();ctx.arc(cx+Math.cos(a)*(R-8),cy+Math.sin(a)*(R-8),5,0,7);ctx.fill();}
+
+  // labels with leader lines (appear in sequence)
+  ctx.globalAlpha = fade;
+  if(t>1.2){ // impeller
+    ctx.strokeStyle='#3aa0ff';ctx.lineWidth=2;ctx.setLineDash([]);
+    ctx.beginPath();ctx.moveTo(cx+40,cy-10);ctx.lineTo(cx+230,cy-70);ctx.stroke();
+    label(cx+300,cy-80,'الدفّاعة (Impeller)','rotating vanes','#9fc3e6');
+  }
+  if(t>2.4){ // suction
+    ctx.beginPath();ctx.moveTo(180,cy);ctx.lineTo(180,cy+120);ctx.stroke();
+    label(200,cy+150,'ماسورة السحب','suction pipe');
+  }
+  if(t>3.4){ // discharge
+    ctx.beginPath();ctx.moveTo(cx,120);ctx.lineTo(cx+200,120);ctx.stroke();
+    label(cx+300,118,'ماسورة الطرد','discharge pipe');
+  }
+
+  // title
+  ctx.globalAlpha=Math.min(1,Math.max(0,(t-0.2)/0.6));
+  ctx.font='bold 40px "Segoe UI",Tahoma,Arial'; ctx.textAlign='center';
+  ctx.fillStyle='#36d399'; ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=10;
+  ctx.fillText('مضخة طرد مركزي', W/2, 56);
+  ctx.font='18px "Segoe UI",Arial'; ctx.fillStyle='#8aa0b4'; ctx.shadowBlur=0;
+  ctx.fillText('Centrifugal Pump — TITAN AI code animation', W/2, 80);
+
+  ctx.globalAlpha=1;
+};
+// initial paint
+window.seekTo(0);
+</script>
+</body>
+</html>
