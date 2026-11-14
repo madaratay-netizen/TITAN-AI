@@ -1,0 +1,5 @@
+# Keep shell scripts LF so they run on Linux regardless of OS/git settings.
+*.sh text eol=lf
+*.nft text eol=lf
+# Normalize text files; Git decides line endings otherwise.
+* text=auto
