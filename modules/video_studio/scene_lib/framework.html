@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"/>
+<style>html,body{margin:0;background:#0b0f14;overflow:hidden}canvas{display:block}</style>
+</head><body>
+<canvas id="c" width="1280" height="720"></canvas>
+<script>
+/* TITAN scene composition framework.
+   The model only produces TITAN_SCENE (JSON). The visual quality lives HERE:
+   a reusable component library + deterministic seekTo(t) animation. */
+window.TITAN_SCENE = __TITAN_SCENE_JSON__;
+
+const SCENE = window.TITAN_SCENE || {components:[],pipes:[],duration:8};
+window.TITAN_DURATION = SCENE.duration || 8;
+window.TITAN_FPS = 30;
+
+const cv=document.getElementById('c'), ctx=cv.getContext('2d'), W=cv.width, H=cv.height;
+const byId={}; (SCENE.components||[]).forEach(c=>byId[c.id]=c);
+function anchor(ref){ if(Array.isArray(ref)) return {x:ref[0],y:ref[1]};
+  const c=byId[ref]; return c?{x:c.x,y:c.y}:{x:W/2,y:H/2}; }
+function pop(t,appear){ const d=t-(appear||0); if(d<0) return 0; return Math.min(1, d/0.4); }
+function ease(p){ return 1-Math.pow(1-p,3); }
+
+function label(x,y,ar,en,a){ if(a<=0)return; ctx.save(); ctx.globalAlpha=a;
+  ctx.font='bold 22px "Segoe UI",Tahoma,Arial'; ctx.textAlign='center';
+  ctx.fillStyle='#e6edf3'; ctx.shadowColor='rgba(0,0,0,.6)'; ctx.shadowBlur=6; ctx.fillText(ar||'',x,y);
+  if(en){ctx.font='14px "Segoe UI",Arial'; ctx.fillStyle='#8aa0b4'; ctx.shadowBlur=0; ctx.fillText(en,x,y+20);} ctx.restore(); }
+
+/* ---------- component library (2.5D-ish) ---------- */
+const COMP={
+  pump(x,y,t){ const R=60;
+    ctx.save();ctx.fillStyle='rgba(0,0,0,.4)';ctx.beginPath();ctx.ellipse(x,y+R*0.8,R*1.05,R*0.3,0,0,7);ctx.fill();ctx.restore();
+    const g=ctx.createLinearGradient(x-R,y-R,x+R,y+R);g.addColorStop(0,'#38506b');g.addColorStop(1,'#1c2c3e');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,R,0,7);ctx.fill();ctx.lineWidth=5;ctx.strokeStyle='#5a7a90';ctx.stroke();
+    ctx.fillStyle='#0f1922';ctx.beginPath();ctx.arc(x,y,R-14,0,7);ctx.fill();
+    ctx.save();ctx.translate(x,y);ctx.rotate(t*5.0);
+    for(let i=0;i<6;i++){ctx.rotate(Math.PI/3);const gr=ctx.createLinearGradient(0,0,R-16,0);
+      gr.addColorStop(0,'#9fc3e6');gr.addColorStop(1,'#3aa0ff');ctx.strokeStyle=gr;ctx.lineWidth=7;ctx.lineCap='round';
+      ctx.beginPath();ctx.moveTo(8,0);ctx.quadraticCurveTo((R-22)*0.6,10,(R-16),4);ctx.stroke();}
+    ctx.fillStyle='#cfe3f5';ctx.beginPath();ctx.arc(0,0,10,0,7);ctx.fill();ctx.restore(); },
+  tank(x,y,t){ const w=90,h=130; const lvl=0.4+0.15*Math.sin(t*2);
+    ctx.save();ctx.fillStyle='rgba(0,0,0,.4)';ctx.beginPath();ctx.ellipse(x,y+h/2+6,w/2*1.1,10,0,0,7);ctx.fill();ctx.restore();
+    const g=ctx.createLinearGradient(x-w/2,0,x+w/2,0);g.addColorStop(0,'#44607e');g.addColorStop(.5,'#6a8bad');g.addColorStop(1,'#2a3e55');
+    ctx.fillStyle=g;ctx.fillRect(x-w/2,y-h/2,w,h);
+    // liquid
+    ctx.save();ctx.beginPath();ctx.rect(x-w/2+4,y-h/2+4,w-8,h-8);ctx.clip();
+    ctx.fillStyle='#1d6fb8';ctx.fillRect(x-w/2,y+h/2-h*lvl,w,h*lvl);
+    ctx.fillStyle='rgba(90,180,255,.5)';ctx.fillRect(x-w/2,y+h/2-h*lvl,w,4);ctx.restore();
+    ctx.lineWidth=3;ctx.strokeStyle='#6a8bad';ctx.strokeRect(x-w/2,y-h/2,w,h);
+    ctx.fillStyle='#2a3e55';ctx.beginPath();ctx.ellipse(x,y-h/2,w/2,10,0,0,7);ctx.fill(); },
+  motor(x,y,t){ const w=84,h=58;
+    const g=ctx.createLinearGradient(0,y-h/2,0,y+h/2);g.addColorStop(0,'#5a4a2a');g.addColorStop(1,'#3a2e18');
+    ctx.fillStyle=g;ctx.beginPath();ctx.roundRect(x-w/2,y-h/2,w,h,8);ctx.fill();
+    ctx.strokeStyle='#7a5a2a';ctx.lineWidth=3;ctx.stroke();
+    // cooling fins
+    ctx.strokeStyle='rgba(0,0,0,.3)';ctx.lineWidth=2;for(let i=-3;i<=3;i++){ctx.beginPath();ctx.moveTo(x+i*10,y-h/2+6);ctx.lineTo(x+i*10,y+h/2-6);ctx.stroke();}
+    // shaft spinning
+    ctx.save();ctx.translate(x+w/2,y);ctx.rotate(t*8);ctx.strokeStyle='#cfe3f5';ctx.lineWidth=4;
+    ctx.beginPath();ctx.moveTo(-8,0);ctx.lineTo(8,0);ctx.stroke();ctx.beginPath();ctx.moveTo(0,-8);ctx.lineTo(0,8);ctx.stroke();ctx.restore(); },
+  valve(x,y,t){ const r=26;
+    ctx.fillStyle='#3a2e18';ctx.fillRect(x-8,y-r-14,16,14);
+    const g=ctx.createLinearGradient(x-r,0,x+r,0);g.addColorStop(0,'#b85a2a');g.addColorStop(1,'#7a3a18');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();ctx.strokeStyle='#d87a4a';ctx.lineWidth=3;ctx.stroke();
+    // handwheel turning
+    ctx.save();ctx.translate(x,y-r-14);ctx.rotate(t*1.5);ctx.strokeStyle='#cfe3f5';ctx.lineWidth=3;
+    for(let i=0;i<3;i++){ctx.rotate(Math.PI/3*2);ctx.beginPath();ctx.moveTo(-14,0);ctx.lineTo(14,0);ctx.stroke();}ctx.restore(); },
+  person(x,y,t){ const bob=Math.sin(t*3)*3; y+=bob; // simple worker figure (أنسنة)
+    ctx.strokeStyle='#e6c38a';ctx.fillStyle='#e6c38a';ctx.lineWidth=6;ctx.lineCap='round';
+    ctx.beginPath();ctx.arc(x,y-46,12,0,7);ctx.fill(); // head
+    ctx.fillStyle='#f5a524';ctx.beginPath();ctx.arc(x,y-52,14,Math.PI,0);ctx.fill(); // helmet
+    ctx.strokeStyle='#3aa0ff';ctx.beginPath();ctx.moveTo(x,y-32);ctx.lineTo(x,y);ctx.stroke(); // body
+    ctx.beginPath();ctx.moveTo(x,y-26);ctx.lineTo(x-16,y-10+Math.sin(t*3)*4);ctx.moveTo(x,y-26);ctx.lineTo(x+16,y-14);ctx.stroke(); // arms
+    ctx.strokeStyle='#2a3e55';ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-12,y+26);ctx.moveTo(x,y);ctx.lineTo(x+12,y+26);ctx.stroke(); },
+  gauge(x,y,t){ const r=28; ctx.fillStyle='#e6edf3';ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fill();
+    ctx.strokeStyle='#2a3e55';ctx.lineWidth=3;ctx.stroke();
+    const ang=-Math.PI*0.75+ (0.5+0.4*Math.sin(t*2))*Math.PI*1.5;
+    ctx.strokeStyle='#c0392b';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+Math.cos(ang)*r*0.8,y+Math.sin(ang)*r*0.8);ctx.stroke();
+    ctx.fillStyle='#2a3e55';ctx.beginPath();ctx.arc(x,y,4,0,7);ctx.fill(); },
+  box(x,y,t){ ctx.fillStyle='#2a3e55';ctx.beginPath();ctx.roundRect(x-44,y-34,88,68,8);ctx.fill();
+    ctx.strokeStyle='#4a6a90';ctx.lineWidth=3;ctx.stroke(); }
+};
+
+function drawPipe(a,b,t,appear){ const p=pop(t,appear); if(p<=0)return;
+  ctx.save();ctx.lineCap='round';ctx.globalAlpha=1;
+  const bx=a.x+(b.x-a.x)*ease(p), by=a.y+(b.y-a.y)*ease(p);
+  ctx.strokeStyle='#223246';ctx.lineWidth=20;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(bx,by);ctx.stroke();
+  ctx.strokeStyle='#2f4660';ctx.lineWidth=12;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(bx,by);ctx.stroke();
+  if(p>=1){ctx.strokeStyle='#3aa0ff';ctx.lineWidth=4;ctx.setLineDash([12,18]);ctx.lineDashOffset=-t*60;
+    ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}
+  ctx.restore(); }
+
+window.seekTo=function(t){
+  const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#0d1824');g.addColorStop(1,'#080c11');
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(58,160,255,.05)';ctx.lineWidth=1;
+  for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+  // pipes first (behind components)
+  (SCENE.pipes||[]).forEach(pp=>drawPipe(anchor(pp.from),anchor(pp.to),t,pp.appear||0));
+
+  // components
+  (SCENE.components||[]).forEach(c=>{ const p=pop(t,c.appear); if(p<=0)return;
+    ctx.save(); ctx.globalAlpha=p; const s=0.6+0.4*ease(p);
+    ctx.translate(c.x,c.y);ctx.scale(s,s);ctx.translate(-c.x,-c.y);
+    (COMP[c.type]||COMP.box)(c.x,c.y,t); ctx.restore(); });
+
+  // labels with leader lines (appear a touch after their component)
+  (SCENE.components||[]).forEach(c=>{ const a=pop(t,(c.appear||0)+0.5); if(a<=0||!c.label)return;
+    const lx=c.x, ly=c.y-70;
+    ctx.save();ctx.globalAlpha=a;ctx.strokeStyle='#3aa0ff';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(c.x,c.y-30);ctx.lineTo(lx,ly+8);ctx.stroke();ctx.restore();
+    label(lx,ly,c.label,c.en||'',a); });
+  (SCENE.pipes||[]).forEach(pp=>{ if(!pp.label)return; const a=anchor(pp.from),b=anchor(pp.to);
+    const al=pop(t,(pp.appear||0)+0.6); label((a.x+b.x)/2,(a.y+b.y)/2-16,pp.label,pp.en||'',al); });
+
+  // title
+  const ta=Math.min(1,Math.max(0,(t-0.2)/0.6));
+  ctx.save();ctx.globalAlpha=ta;ctx.textAlign='center';
+  ctx.font='bold 38px "Segoe UI",Tahoma,Arial';ctx.fillStyle='#36d399';ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=10;
+  ctx.fillText(SCENE.title||'',W/2,52);
+  ctx.font='17px "Segoe UI",Arial';ctx.fillStyle='#8aa0b4';ctx.shadowBlur=0;
+  ctx.fillText(SCENE.subtitle||'TITAN AI',W/2,76);ctx.restore();
+};
+window.seekTo(0);
+</script></body></html>
