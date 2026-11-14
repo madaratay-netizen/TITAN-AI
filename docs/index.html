@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TITAN AI — استوديو ذكاء اصطناعي في جيبك</title>
+<meta name="description" content="استوديو ذكاء اصطناعي كامل، أوفلاين، محمول على SSD. شات، مستندات، صور، فيديو، صوت، برمجة — كله على جهازك بدون إنترنت." />
+<style>
+  :root{
+    --bg:#0b0f14; --bg2:#0e141c; --panel:#121923; --line:#1e2a38;
+    --text:#e6edf3; --muted:#8aa0b4; --blue:#3aa0ff; --green:#36d399;
+    --warn:#f5a524; --accent:#13243a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);
+    font-family:"Segoe UI",Tahoma,"Noto Naskh Arabic",system-ui,Arial,sans-serif;
+    line-height:1.9;-webkit-font-smoothing:antialiased}
+  a{color:var(--blue);text-decoration:none}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 20px}
+  /* Hero */
+  header.hero{padding:70px 0 50px;text-align:center;
+    background:radial-gradient(1200px 400px at 50% -10%,#10243a 0%,var(--bg) 60%);
+    border-bottom:1px solid var(--line)}
+  .logo{font-size:40px;font-weight:800;letter-spacing:3px}
+  .logo .t{color:var(--blue)} .logo .a{color:var(--green)}
+  .tag{font-size:21px;color:var(--text);margin:16px auto 6px;max-width:680px}
+  .sub{color:var(--muted);max-width:620px;margin:0 auto 26px;font-size:16px}
+  .badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+  .badge{border:1px solid var(--line);background:var(--panel);border-radius:22px;
+    padding:7px 15px;font-size:13px;color:var(--muted)}
+  .badge b{color:var(--green)}
+  /* Sections */
+  section{padding:48px 0;border-bottom:1px solid var(--line)}
+  h2{font-size:26px;margin:0 0 6px}
+  .lead{color:var(--muted);margin:0 0 26px;font-size:16px}
+  .grid{display:grid;gap:14px}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  @media(max-width:760px){.g3,.g2{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+  .card .ico{font-size:26px}
+  .card h3{margin:8px 0 4px;font-size:17px}
+  .card p{margin:0;color:var(--muted);font-size:14px}
+  .card .ex{margin-top:8px;font-size:13px;color:var(--blue)}
+  /* flow */
+  .flow{display:flex;flex-direction:column;gap:10px;max-width:640px;margin:0 auto}
+  .layer{display:flex;align-items:center;gap:14px;background:var(--panel);
+    border:1px solid var(--line);border-radius:12px;padding:14px 18px}
+  .layer .n{font-size:26px}
+  .layer b{display:block} .layer span{color:var(--muted);font-size:14px}
+  .arrow{text-align:center;color:var(--blue);font-size:20px;margin:-4px 0}
+  .note{background:var(--accent);border:1px solid #1c4a73;border-radius:12px;
+    padding:14px 18px;color:var(--text);margin-top:22px;font-size:15px}
+  .note b{color:var(--green)}
+  /* lists */
+  ul.ideas{list-style:none;padding:0;margin:0;display:grid;gap:10px;
+    grid-template-columns:repeat(2,1fr)}
+  @media(max-width:760px){ul.ideas{grid-template-columns:1fr}}
+  ul.ideas li{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:12px 15px;font-size:14px}
+  ul.ideas b{color:var(--text)}
+  /* table */
+  table{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px}
+  th,td{text-align:right;padding:10px 12px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600}
+  .lv{font-weight:700}
+  .c1{color:var(--green)}.c2{color:var(--blue)}.c3{color:#b78bff}
+  .c4{color:var(--warn)}.c5{color:#f06060}
+  /* code */
+  pre{background:#070c12;border:1px solid var(--line);border-radius:12px;
+    padding:16px;overflow:auto;direction:ltr;text-align:left;
+    font-family:"Cascadia Code",Consolas,monospace;font-size:13px;color:#cfe3f5}
+  .pill{display:inline-block;background:var(--panel);border:1px solid var(--line);
+    border-radius:8px;padding:2px 9px;font-size:13px;color:var(--muted);margin:2px}
+  footer{padding:40px 0 60px;text-align:center;color:var(--muted)}
+  footer a{margin:0 8px}
+  .kicker{color:var(--green);font-size:13px;letter-spacing:2px;text-transform:uppercase}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="logo"><span class="t">TITAN</span> <span class="a">AI</span></div>
+    <p class="tag">استوديو ذكاء اصطناعي كامل… في جيبك 🚀</p>
+    <p class="sub">شغّال بدون إنترنت، محمول على SSD، وبيحترم خصوصيتك. يتكلم، يقرا مستنداتك، يعمل صور وفيديو وصوت، ويساعدك تبرمج — كله على جهازك.</p>
+    <div class="badges">
+      <span class="badge">📴 أوفلاين بالكامل</span>
+      <span class="badge">🔒 خصوصية كاملة</span>
+      <span class="badge">💾 محمول على SSD</span>
+      <span class="badge"><b>8</b> أدوات</span>
+      <span class="badge"><b>مجاني</b> ومفتوح المصدر</span>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="kicker">الفكرة ببساطة</div>
+    <h2>إيه هو TITAN AI؟</h2>
+    <p class="lead">تخيّل إنك ماسك "عقل ذكاء اصطناعي" في جيبك: بتحطه على فلاشة/هارد خارجي، توصّله بأي كمبيوتر، وتشتغل — <b>من غير ما تغيّر نظام الكمبيوتر الأصلي، ومن غير إنترنت، ومن غير ما أي بيانات تطلع برّه</b>.</p>
+    <div class="grid g3">
+      <div class="card"><div class="ico">📴</div><h3>أوفلاين فعلاً</h3><p>شغّال من غير نت بعد التحميل الأول — ومُختبَر إنه كده.</p></div>
+      <div class="card"><div class="ico">🔒</div><h3>خصوصية كاملة</h3><p>ملفاتك ومحادثاتك بتفضل على جهازك. مفيش سيرفرات.</p></div>
+      <div class="card"><div class="ico">💾</div><h3>محمول وآمن</h3><p>على SSD، ما بيلمسش قرص ويندوز الداخلي بتاع الجهاز.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="kicker">بيعمل إيه</div>
+    <h2>الأدوات الـ 8 جوّاه</h2>
+    <p class="lead">كل أداة زي "برنامج" مستقل — وتقدر تستخدم اللي تحبه.</p>
+    <div class="grid g3">
+      <div class="card"><div class="ico">💬</div><h3>AI Chat</h3><p>مساعد ذكي بتتكلم معاه بالعربي والإنجليزي.</p><div class="ex">"اشرحلي فكرة مشروع"</div></div>
+      <div class="card"><div class="ico">📚</div><h3>Knowledge Center</h3><p>تدّيه مستنداتك (PDF/Word/Excel) ويجاوب منها بالمصدر.</p><div class="ex">"إيه ضغط خط الحريق في العقد؟"</div></div>
+      <div class="card"><div class="ico">🎨</div><h3>Image Studio</h3><p>بيولّد صور من وصف نصي (يحتاج كارت شاشة قوي).</p><div class="ex">"محطة أبحاث وقت الغروب"</div></div>
+      <div class="card"><div class="ico">🎙️</div><h3>Voice Studio</h3><p>نص ↔ صوت + تفريغ تسجيلات + ترجمة.</p><div class="ex">تعليق صوتي أو تفريغ مقابلة</div></div>
+      <div class="card"><div class="ico">🎬</div><h3>Video Studio</h3><p>فيديو من مشاهد + تعليق صوتي + ترجمة (بـ FFmpeg).</p><div class="ex">فيديو تعريفي 30 ثانية</div></div>
+      <div class="card"><div class="ico">💻</div><h3>Developer Lab</h3><p>مساعد برمجة يكتب ويشرح — وما ينفّذ إلا بموافقتك.</p><div class="ex">"اكتبلي دالة فيبوناتشي"</div></div>
+      <div class="card"><div class="ico">🛡️</div><h3>IT & Cyber Lab</h3><p>أدوات تشخيص شبكة ونظام — دفاعية فقط.</p><div class="ex">فحص صحة الجهاز والشبكة</div></div>
+      <div class="card"><div class="ico">🗂️</div><h3>Storage & Security</h3><p>إدارة المساحة والملفات وحماية بياناتك.</p><div class="ex">تنبيه قبل امتلاء القرص</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="kicker">بيشتغل إزاي</div>
+    <h2>3 طبقات… وعقل ذكي</h2>
+    <p class="lead">من غير تعقيد: إنت بتضغط في الواجهة، الخادم ينظّم، والمحركات تعمل الشغل على جهازك.</p>
+    <div class="flow">
+      <div class="layer"><span class="n">👁️</span><div><b>الواجهة (Dashboard)</b><span>اللي بتشوفه وتضغط عليه في المتصفح</span></div></div>
+      <div class="arrow">↓</div>
+      <div class="layer"><span class="n">🧠</span><div><b>الخادم (Backend)</b><span>بيستقبل طلبك وينظّم الشغل</span></div></div>
+      <div class="arrow">↓</div>
+      <div class="layer"><span class="n">🔌</span><div><b>محركات الذكاء المحلية</b><span>Ollama للنصوص · ComfyUI للصور · FFmpeg للفيديو · Whisper للصوت</span></div></div>
+    </div>
+    <div class="note">🎯 <b>السر:</b> "المحرك التكيّفي" بيفحص جهازك (المعالج/الرامات/كارت الشاشة) ويقرر لوحده أنهي حاجات تشتغل بأمان. <b>وأهم قاعدة: ما بيكدبش عليك</b> — لو حاجة مش قادر عليها، بيقوللك بصراحة ويقترح بديل.</div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="kicker">بينتج إيه</div>
+    <h2>مخرجات حقيقية تحتفظ بيها</h2>
+    <p class="lead">كل شغلك بيتحفظ في مجلد منظّم تفتحه من ويندوز ولينكس.</p>
+    <div class="grid g3">
+      <div class="card"><div class="ico">🖼️</div><h3>صور</h3><p>من الوصف النصي → مجلد Images</p></div>
+      <div class="card"><div class="ico">🎬</div><h3>فيديوهات MP4</h3><p>بمشاهد وصوت → مجلد Videos</p></div>
+      <div class="card"><div class="ico">🔊</div><h3>ملفات صوت</h3><p>تعليق وتفريغ → مجلد Audio</p></div>
+      <div class="card"><div class="ico">📄</div><h3>مستندات وإجابات</h3><p>بالمصادر → مجلد Documents</p></div>
+      <div class="card"><div class="ico">💻</div><h3>كود ومشاريع</h3><p>→ مجلد Code / Projects</p></div>
+      <div class="card"><div class="ico">💬</div><h3>محادثاتك</h3><p>محفوظة → AI_Conversations</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="kicker">أفكار واستخدامات</div>
+    <h2>تقدر تستخدمه في إيه؟</h2>
+    <p class="lead">أفكار عملية تبدأ بيها على طول.</p>
+    <ul class="ideas">
+      <li><b>مساعد بحث في مستنداتك</b> — اسأل أسئلة ويجاوب بالمصدر (تقنية RAG).</li>
+      <li><b>إنتاج فيديو تعريفي/إعلاني</b> — فكرة → مشاهد → تعليق صوتي → MP4.</li>
+      <li><b>تفريغ الاجتماعات</b> — تسجيل → نص + ترجمة (Speech-to-Text).</li>
+      <li><b>مساعد برمجة آمن</b> — يكتب ويشرح، وما ينفّذ إلا بموافقتك.</li>
+      <li><b>توليد صور للمحتوى</b> — من وصف نصي (Stable Diffusion).</li>
+      <li><b>تعليق صوتي احترافي</b> — أي نص → صوت (Text-to-Speech).</li>
+      <li><b>تشخيص جهازك وشبكتك</b> — أدوات IT دفاعية.</li>
+      <li><b>مساعد شخصي أوفلاين</b> — تلخيص، كتابة، أفكار… بدون نت.</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="kicker">التوافق</div>
+    <h2>يشتغل على أنهي أجهزة؟</h2>
+    <p class="lead">بيصنّف جهازك لمستويات، وكل مستوى بيفتح مميزات أكتر — حتى الجهاز البسيط بيشتغل.</p>
+    <table>
+      <thead><tr><th>المستوى</th><th>الجهاز</th><th>بيعمل إيه</th></tr></thead>
+      <tbody>
+        <tr><td class="lv c1">🟢 أساسي</td><td>رامات 4–8 جيجا</td><td>شات خفيف + مستندات</td></tr>
+        <tr><td class="lv c2">🔵 قياسي</td><td>رامات 8–16 جيجا</td><td>شات أكبر + RAG + برمجة</td></tr>
+        <tr><td class="lv c3">🟣 متقدم</td><td>رامات 16–32 جيجا</td><td>موديلات أكبر + RAG موسّع</td></tr>
+        <tr><td class="lv c4">🟠 مبدع</td><td>كارت شاشة 6 جيجا+</td><td>توليد صور + فيديو قصير</td></tr>
+        <tr><td class="lv c5">🔴 استوديو</td><td>كارت شاشة 12 جيجا+</td><td>فيديو متقدم + دقّات عالية</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="kicker">جرّبه بسرعة</div>
+    <h2>3 خطوات</h2>
+    <pre>
+# 1) تقرير جهازك (بدون أي تثبيت):
+python scripts/titan_report.py
+
+# 2) تثبيت المتطلبات:
+pip install -r requirements.txt
+
+# 3) تشغيل TITAN وفتح الواجهة:
+uvicorn backend.app.main:app --host 127.0.0.1 --port 8077
+# ثم افتح:  http://127.0.0.1:8077</pre>
+    <p class="lead" style="margin-top:14px">للشات محتاج <a href="https://ollama.com">Ollama</a> + موديل صغير زي
+      <span class="pill">qwen3.5:4b</span></p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="logo" style="font-size:24px"><span class="t">TITAN</span> <span class="a">AI</span></div>
+    <p>استوديو ذكاء اصطناعي كامل · خاص · أوفلاين · محمول في جيبك.</p>
+    <p>
+      <a href="https://github.com/madaratay-netizen/TITAN-AI">GitHub</a> ·
+      <a href="BEGINNERS_GUIDE_AR.md">الدليل الكامل</a> ·
+      <a href="ARCHITECTURE.md">المعمارية</a> ·
+      <a href="../README.md">README</a>
+    </p>
+    <p style="font-size:13px;color:#5b6f82">مرخّص MIT · المكوّنات والموديلات تحتفظ بتراخيصها</p>
+  </div>
+</footer>
+
+</body>
+</html>
