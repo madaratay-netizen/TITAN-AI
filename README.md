@@ -10,6 +10,9 @@ any compatible x86-64 PC without touching the host's internal drives.
 > scaffolded and planned. Nothing here fakes AI output. See
 > [docs/PHASE_REPORT.md](docs/PHASE_REPORT.md).
 
+> 🌍 **جديد على المشروع؟ ابدأ من هنا (بالعربي، للمبتدئين):**
+> **[TITAN AI — الحكاية كاملة ببساطة](docs/BEGINNERS_GUIDE_AR.md)**
+
 ## What works right now
 - **Hardware detection** — real CPU/RAM/GPU/VRAM/disk/accel probing (Win + Linux).
 - **Adaptive engine** — classifies the machine into profiles P1–P5 and makes
