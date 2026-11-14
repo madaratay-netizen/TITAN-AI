@@ -24,7 +24,7 @@ from core.model_registry.registry import ModelRegistry
 from core.offline_manager import offline
 from modules.chat import ollama_client
 from backend.app.config import settings, REPO_ROOT
-from backend.app.routers import knowledge, dev
+from backend.app.routers import knowledge, dev, cyber
 
 logging.basicConfig(
     level=logging.INFO,
@@ -51,6 +51,7 @@ _registry = ModelRegistry(db_path=Path(settings.db_path))
 
 app.include_router(knowledge.router)
 app.include_router(dev.router)
+app.include_router(cyber.router)
 
 # Planning budget for a 128GB external SSD (final approved design).
 STORAGE_PLAN_128 = {

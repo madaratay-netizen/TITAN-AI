@@ -99,7 +99,7 @@ FastAPI app, **loopback-bound by default**, CORS limited to localhost. Endpoints
 | `voice_studio` | Planned (Phase 8) | Whisper.cpp + Piper |
 | `knowledge_center` | **Implemented** (Phase 9) — RAG with citations | local embeddings + SQLite vector store |
 | `developer_lab` | **Implemented** (Phase 10) — assistant + approval-gated exec | coding LLM, confined sandbox |
-| `cyber_lab` | Planned | nmap, diagnostics (authorized only) |
+| `cyber_lab` | **Implemented** (Phase 13) — defensive diagnostics + authorized port check | psutil, sockets, DNS/ping |
 
 ## 6. Technology choices
 Python + FastAPI (backend), static JS dashboard now → React+TS later, SQLite

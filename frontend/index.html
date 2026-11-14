@@ -72,7 +72,7 @@
     <a class="dim" title="Phase 8">Voice Studio</a>
     <a data-view="knowledge" href="#">Knowledge Center</a>
     <a data-view="dev" href="#">Developer Lab</a>
-    <a class="dim" title="Phase 10">IT &amp; Cyber Lab</a>
+    <a data-view="cyber" href="#">IT &amp; Cyber Lab</a>
   </nav>
   <section class="content">
     <!-- DASHBOARD -->
@@ -156,6 +156,41 @@
           <div class="notice">Nothing runs until you click Approve. Execution is confined to <code>storage/dev_workspace</code>, timed, and destructive patterns are blocked.</div>
         </div>
       </div>
+    </div>
+    <!-- IT & CYBER LAB -->
+    <div id="view-cyber" class="hidden">
+      <h2>IT &amp; Cyber Lab <span class="muted">— defensive diagnostics only</span></h2>
+      <div class="grid" style="grid-template-columns:1fr 1fr;align-items:start">
+        <div class="card">
+          <h3>System health <button id="cy-refresh" style="float:right;padding:3px 10px;font-size:12px">Refresh</button></h3>
+          <pre id="cy-sys" style="white-space:pre-wrap;font-size:12px;margin-top:8px"></pre>
+          <h3 style="margin-top:10px">Network interfaces</h3>
+          <pre id="cy-if" style="white-space:pre-wrap;font-size:12px;max-height:160px;overflow:auto"></pre>
+        </div>
+        <div class="card">
+          <h3>DNS &amp; ping</h3>
+          <div style="display:flex;gap:8px;margin:8px 0">
+            <input id="cy-host" placeholder="hostname or IP (e.g. localhost)" style="flex:1;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:8px"/>
+            <button id="cy-dns">DNS</button><button id="cy-ping">Ping</button>
+          </div>
+          <pre id="cy-netout" style="white-space:pre-wrap;font-size:12px;max-height:150px;overflow:auto"></pre>
+          <h3 style="margin-top:12px">Port check <span class="muted" style="font-weight:400">— authorized targets only</span></h3>
+          <div style="display:flex;gap:8px;align-items:center;margin:8px 0">
+            <input id="cy-target" placeholder="target host" value="127.0.0.1" style="flex:1;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:8px"/>
+            <label class="muted" style="font-size:12px"><input type="checkbox" id="cy-auth"/> I'm authorized</label>
+            <button id="cy-scan">Check</button>
+          </div>
+          <pre id="cy-scanout" style="white-space:pre-wrap;font-size:12px;max-height:150px;overflow:auto"></pre>
+        </div>
+      </div>
+      <div class="section"><h2>Log analysis</h2>
+        <div class="card">
+          <textarea id="cy-log" placeholder="Paste log text to analyze…" style="width:100%;height:90px;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:8px"></textarea>
+          <button id="cy-loganalyze" style="margin-top:8px">Analyze</button>
+          <pre id="cy-logout" style="white-space:pre-wrap;font-size:12px;margin-top:8px;max-height:200px;overflow:auto"></pre>
+        </div>
+      </div>
+      <div class="notice">Read-only diagnostics. Port checks run only on loopback or targets you confirm you're authorized to test. No exploitation, stealth, or credential tools.</div>
     </div>
     <!-- MODELS -->
     <div id="view-models" class="hidden">
@@ -299,10 +334,42 @@ async function devReject(){if(!devCurrent)return;
 $('#dev-gen')&&($('#dev-gen').onclick=devGen);
 $('#dev-propose')&&($('#dev-propose').onclick=devPropose);
 
-function show(v){['dashboard','chat','models','knowledge','dev'].forEach(x=>$('#view-'+x).classList.toggle('hidden',x!==v));
+// ---- IT & Cyber Lab ----
+function fmt(o){return JSON.stringify(o,null,2);}
+async function cyLoad(){
+  try{$('#cy-sys').textContent=fmt(await api('/api/cyber/system'));}catch(e){$('#cy-sys').textContent='⚠ '+e;}
+  try{const i=await api('/api/cyber/interfaces');
+    $('#cy-if').textContent=i.interfaces.map(x=>`${x.name} ${x.up?'(up)':''}: `+
+      x.addresses.map(a=>a.address).join(', ')).join('\n');}catch(e){$('#cy-if').textContent='⚠ '+e;}
+}
+async function cyDns(){const h=$('#cy-host').value.trim();if(!h)return;$('#cy-netout').textContent='…';
+  try{$('#cy-netout').textContent=fmt(await api('/api/cyber/dns?host='+encodeURIComponent(h)));}catch(e){$('#cy-netout').textContent='⚠ '+e;}}
+async function cyPing(){const h=$('#cy-host').value.trim();if(!h)return;$('#cy-netout').textContent='pinging…';
+  try{const r=await kcPost('/api/cyber/ping',{host:h,count:4});
+    $('#cy-netout').textContent=`ok=${r.ok} avg=${r.avg_ms??'?'}ms\n`+(r.output||r.error||'');}catch(e){$('#cy-netout').textContent='⚠ '+e.message;}}
+async function cyScan(){const h=$('#cy-target').value.trim();if(!h)return;$('#cy-scanout').textContent='checking…';
+  try{const r=await kcPost('/api/cyber/scan',{host:h,authorized:$('#cy-auth').checked});
+    if(r.authorization_required){$('#cy-scanout').textContent='🔒 '+r.message;return;}
+    $('#cy-scanout').textContent=`${r.target.ip} (${r.target.scope}) — ${r.ports_checked} ports in ${r.duration_s}s\nOPEN: `+
+      (r.open_ports.length?r.open_ports.map(p=>`${p.port}/${p.service}`).join(', '):'none');}
+  catch(e){$('#cy-scanout').textContent='⚠ '+e.message;}}
+async function cyLogs(){const t=$('#cy-log').value;if(!t.trim())return;$('#cy-logout').textContent='…';
+  try{const r=await kcPost('/api/cyber/logs/text',{text:t});
+    let s=`${r.total_lines} lines · errors: ${r.error_count}\nby level: ${fmt(r.by_level)}`;
+    if(r.recent_errors.length)s+='\n\nrecent errors:\n'+r.recent_errors.map(e=>`  L${e.line}: ${e.text}`).join('\n');
+    if(r.top_error_signatures.length)s+='\n\ntop signatures:\n'+r.top_error_signatures.map(x=>`  ${x.count}x ${x.signature}`).join('\n');
+    $('#cy-logout').textContent=s;}catch(e){$('#cy-logout').textContent='⚠ '+e.message;}}
+$('#cy-refresh')&&($('#cy-refresh').onclick=cyLoad);
+$('#cy-dns')&&($('#cy-dns').onclick=cyDns);
+$('#cy-ping')&&($('#cy-ping').onclick=cyPing);
+$('#cy-scan')&&($('#cy-scan').onclick=cyScan);
+$('#cy-loganalyze')&&($('#cy-loganalyze').onclick=cyLogs);
+
+function show(v){['dashboard','chat','models','knowledge','dev','cyber'].forEach(x=>$('#view-'+x).classList.toggle('hidden',x!==v));
   document.querySelectorAll('nav a[data-view]').forEach(a=>a.classList.toggle('active',a.dataset.view===v));
   if(v==='models')loadModels();
-  if(v==='knowledge')kcLoadLibs();}
+  if(v==='knowledge')kcLoadLibs();
+  if(v==='cyber')cyLoad();}
 document.querySelectorAll('nav a[data-view]').forEach(a=>a.onclick=e=>{e.preventDefault();show(a.dataset.view);});
 $('#send').onclick=send;$('#inp').addEventListener('keydown',e=>{if(e.key==='Enter')send();});
 setInterval(()=>$('#clock').textContent=new Date().toLocaleTimeString(),1000);

@@ -66,7 +66,21 @@ and installation docs, `docker-compose.yml`, pinned `requirements.txt`.
   approve-without-confirm → **403 refused**; approve-with-confirm → ran confined
   (exit 0, stdout `4950`); `rm -rf /` → flagged and **403 blocked**.
 - Routes `/api/dev/*` + a working Developer Lab dashboard view.
-- **Cyber Lab** (nmap/diagnostics, authorized-only) remains planned.
+
+## Phase 13 (IT & Cyber Lab) ✅ done & verified live — defensive only
+- `modules/cyber_lab/` — read-only diagnostics + an authorization-gated check:
+  - `diagnostics.py` — system health (CPU/RAM/uptime/procs), disk health (usage +
+    SMART/WMI status), network interfaces, DNS lookup, ping (arg-list, no shell).
+  - `scanner.py` — TCP-**connect** port check (no stealth/raw sockets). Loopback is
+    allowed; private/public targets require explicit `authorized=true`. Single host,
+    port count capped.
+  - `logs.py` — severity counts, recent errors, and normalized error-signature grouping;
+    file analysis confined to an allowed directory.
+- **Verified live:** system metrics returned; loopback check found 445/8077/11434;
+  **scanning 8.8.8.8 without authorization was gated** (authorization_required); logs
+  grouped two `disk <path> failed` lines into one signature.
+- No exploitation, stealth, credential-testing, or persistence features — by design.
+- Routes `/api/cyber/*` + a working IT & Cyber Lab dashboard view.
 
 ## Phases 6–8, 11 — Studios + hardening 🔜 planned
 Image (ComfyUI/SDXL), Video (scene-based FFmpeg pipeline), Voice (Whisper.cpp +
@@ -83,7 +97,7 @@ Piper), firewall/offline hardening, storage manager. Scaffolded; **not implement
 ## Tests actually run
 | Suite | Result |
 |---|---|
-| `pytest` (engine + registry + API + knowledge/RAG + dev lab) | **53 passed** |
+| `pytest` (engine + registry + API + RAG + dev lab + cyber lab) | **68 passed** |
 | `scripts/offline_test.py` | **5 passed, 0 failed, 0 skipped** |
 | Live API + chat (`qwen3.5:4b`) | **verified** |
 | Dashboard render (browser) | **verified** |
