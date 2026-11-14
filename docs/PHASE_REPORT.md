@@ -153,9 +153,27 @@ and installation docs, `docker-compose.yml`, pinned `requirements.txt`.
 - On low-resource machines, editing/assembly from imported footage works without
   any AI video model (per the brief). Routes `/api/video/*` + a Video Studio view.
 
-## Phase 11 — Offline hardening 🔜 planned
-Firewall rules + network egress hardening + the offline isolation test on
-hardware. Scaffolded; **not implemented**.
+## Phase 11 — Offline hardening ✅ done & verified live
+- `core/security_manager/` — the offline security posture made real:
+  - `firewall.py` — generates **nftables** (Linux) + **Windows** firewall rules for
+    `offline` (default-drop outbound, loopback only) and `download` (+ DNS/HTTP/S)
+    modes. Templates written to `infrastructure/firewall/`. **TITAN never applies
+    them automatically** (that would change system security settings).
+  - `egress.py` — egress self-test: bare TCP connects to public DNS IPs (no data
+    sent) → `egress_blocked` / `egress_open`, so isolation is reported truthfully.
+  - `audit.py` — config audit: loopback bind, offline mode, local AI endpoint, no
+    telemetry, no auto-download, honest isolation claim → posture
+    (hardened / needs_attention / not_offline_safe).
+- **Verified live:** audit = **hardened (6/6 pass)**; egress test correctly reported
+  `egress_open` on this internet-connected dev box ("apply the offline firewall to
+  block egress") — the honest offline-mode vs fully-isolated distinction; offline
+  nftables ruleset generated.
+- Routes `/api/security/*` + a Security dashboard view (audit, egress, firewall).
+
+## Remaining — Live-boot build + partition tooling (Phase 6/12/14) 🔜
+Live image build, GRUB/overlay config, and the confirmation-gated on-SSD
+partition/install tooling (identify_disk.sh is the read-only start). Documented;
+scripts to be built + tested on VMs/loopback (never a real user disk).
 
 ## Phase 12 — Install/deploy/recovery/test scripts 🟡 partial
 - `scripts/titan_report.py` ✅, `scripts/offline_test.py` ✅ (5/5 pass),
@@ -168,7 +186,7 @@ hardware. Scaffolded; **not implemented**.
 ## Tests actually run
 | Suite | Result |
 |---|---|
-| `pytest` (engine + registry + API + RAG + dev + cyber + voice + image + storage + video) | **113 passed** |
+| `pytest` (engine + registry + API + RAG + dev + cyber + voice + image + storage + video + security) | **123 passed** |
 | `scripts/offline_test.py` | **5 passed, 0 failed, 0 skipped** |
 | Live API + chat (`qwen3.5:4b`) | **verified** |
 | Dashboard render (browser) | **verified** |

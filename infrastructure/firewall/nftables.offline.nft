@@ -1,0 +1,22 @@
+#!/usr/sbin/nft -f
+# TITAN AI — STRICT OFFLINE (no outbound except loopback)
+flush ruleset
+
+table inet titan {
+    chain input {
+        type filter hook input priority 0; policy drop;
+        ct state established,related accept
+        iif "lo" accept
+        # TITAN services bind to loopback only; no inbound needed.
+    }
+    chain forward {
+        type filter hook forward priority 0; policy drop;
+    }
+    chain output {
+        type filter hook output priority 0; policy drop;
+        ct state established,related accept
+        oif "lo" accept
+        # Strict offline: no other outbound allowed.
+        counter drop
+    }
+}

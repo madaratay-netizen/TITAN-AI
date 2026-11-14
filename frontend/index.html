@@ -74,6 +74,7 @@
     <a data-view="dev" href="#">Developer Lab</a>
     <a data-view="cyber" href="#">IT &amp; Cyber Lab</a>
     <a data-view="storage" href="#">Storage Manager</a>
+    <a data-view="security" href="#">Security</a>
   </nav>
   <section class="content">
     <!-- DASHBOARD -->
@@ -274,6 +275,33 @@
         </div>
       </div>
       <div class="notice">Real FFmpeg assembly — works offline on this hardware. A long video is built from scenes, not one AI inference. AI clip generation is optional and shown only when the hardware supports it.</div>
+    </div>
+    <!-- SECURITY / OFFLINE HARDENING -->
+    <div id="view-security" class="hidden">
+      <h2>Security <span class="muted">— offline hardening</span></h2>
+      <div class="grid" style="grid-template-columns:1fr 1fr;align-items:start">
+        <div class="card">
+          <h3>Configuration audit</h3>
+          <div id="sec-posture" style="margin:6px 0"></div>
+          <table id="sec-audit"><tbody></tbody></table>
+        </div>
+        <div class="card">
+          <h3>Egress self-test</h3>
+          <div class="muted" style="font-size:12px;margin:4px 0">Checks whether outbound network access is open (bare TCP connects to public DNS IPs — no data sent).</div>
+          <button id="sec-egress">Run egress test</button>
+          <pre id="sec-egress-out" style="white-space:pre-wrap;font-size:12px;margin-top:8px"></pre>
+        </div>
+      </div>
+      <div class="section"><h2>Firewall rules</h2>
+        <div class="card">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+            <select id="sec-fw-mode" style="background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:8px;border-radius:6px"><option value="offline">offline (strict)</option><option value="download">download</option></select>
+            <button id="sec-fw">Show nftables rules</button>
+            <span class="muted" style="font-size:12px">Generated for review — TITAN never applies them automatically.</span>
+          </div>
+          <pre id="sec-fw-out" style="white-space:pre-wrap;font-size:11px;max-height:280px;overflow:auto"></pre>
+        </div>
+      </div>
     </div>
     <!-- STORAGE MANAGER -->
     <div id="view-storage" class="hidden">
@@ -571,7 +599,24 @@ async function vidRender(){if(!vidProject)return;
 $('#vid-story')&&($('#vid-story').onclick=vidStory);
 $('#vid-render')&&($('#vid-render').onclick=vidRender);
 
-function show(v){['dashboard','chat','models','knowledge','dev','cyber','voice','image','storage','video'].forEach(x=>$('#view-'+x).classList.toggle('hidden',x!==v));
+// ---- Security ----
+const secIcon={pass:'✅',warn:'⚠️',fail:'❌'};
+async function secLoad(){
+  const a=await api('/api/security/audit');
+  const pc={hardened:'var(--green)',needs_attention:'var(--warn)',not_offline_safe:'var(--bad)'}[a.posture]||'var(--muted)';
+  $('#sec-posture').innerHTML=`<span style="color:${pc};font-weight:700;text-transform:uppercase">${a.posture.replace(/_/g,' ')}</span> <span class="muted">· ${a.passed} pass · ${a.warnings} warn · ${a.failures} fail</span>`;
+  $('#sec-audit tbody').innerHTML=a.checks.map(c=>`<tr><td>${secIcon[c.status]||''}</td><td>${c.name.replace(/_/g,' ')}</td><td class="muted" style="font-size:12px">${c.detail}</td></tr>`).join('');
+}
+async function secEgress(){$('#sec-egress-out').textContent='Testing…';
+  try{const r=await kcPost('/api/security/egress-test',{});
+    $('#sec-egress-out').textContent=`isolation: ${r.isolation}\nreachable: ${r.reachable.join(', ')||'none'}\nblocked: ${r.blocked.join(', ')||'none'}\n\n${r.detail}`;}
+  catch(e){$('#sec-egress-out').textContent='⚠ '+e.message;}}
+async function secFw(){const m=$('#sec-fw-mode').value;
+  const r=await api('/api/security/firewall?mode='+m);$('#sec-fw-out').textContent=r.nftables;}
+$('#sec-egress')&&($('#sec-egress').onclick=secEgress);
+$('#sec-fw')&&($('#sec-fw').onclick=secFw);
+
+function show(v){['dashboard','chat','models','knowledge','dev','cyber','voice','image','storage','video','security'].forEach(x=>$('#view-'+x).classList.toggle('hidden',x!==v));
   document.querySelectorAll('nav a[data-view]').forEach(a=>a.classList.toggle('active',a.dataset.view===v));
   if(v==='models')loadModels();
   if(v==='knowledge')kcLoadLibs();
@@ -579,7 +624,8 @@ function show(v){['dashboard','chat','models','knowledge','dev','cyber','voice',
   if(v==='voice')voLoad();
   if(v==='image')imgLoad();
   if(v==='storage')stLoad();
-  if(v==='video')vidLoad();}
+  if(v==='video')vidLoad();
+  if(v==='security')secLoad();}
 document.querySelectorAll('nav a[data-view]').forEach(a=>a.onclick=e=>{e.preventDefault();show(a.dataset.view);});
 $('#send').onclick=send;$('#inp').addEventListener('keydown',e=>{if(e.key==='Enter')send();});
 setInterval(()=>$('#clock').textContent=new Date().toLocaleTimeString(),1000);
