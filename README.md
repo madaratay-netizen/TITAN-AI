@@ -46,8 +46,15 @@ pip install -r requirements.txt
 uvicorn backend.app.main:app --host 127.0.0.1 --port 8077
 # open http://127.0.0.1:8077
 ```
-Full guide: [INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md) ·
-Architecture: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+## Documentation
+- [docs/FIRST_DELIVERABLE.md](docs/FIRST_DELIVERABLE.md) — design brief (architecture, partitions, Live tech, runtimes, roadmap, risks)
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · [docs/STORAGE_LAYOUT.md](docs/STORAGE_LAYOUT.md) · [docs/LIVE_BOOT.md](docs/LIVE_BOOT.md)
+- [docs/OFFLINE_MODE.md](docs/OFFLINE_MODE.md) · [docs/MODEL_MANAGEMENT.md](docs/MODEL_MANAGEMENT.md) · [docs/SECURITY.md](docs/SECURITY.md)
+- [docs/TESTING.md](docs/TESTING.md) · [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) · [docs/PHASE_REPORT.md](docs/PHASE_REPORT.md)
+- [INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md) — dev quickstart + SSD deployment
+
+Target SSD: **128 GB (119.24 GiB usable)**; user outputs live on a separate
+exFAT **`TITAN_WORKSPACE`** partition, readable from Windows and Linux.
 
 ## Repository layout
 ```

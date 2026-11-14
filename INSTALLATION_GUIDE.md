@@ -50,20 +50,29 @@ pytest -q
 **Target:** a 128 GB external USB SSD (≈119 GB usable). Design: **Live Linux +
 persistent workspace + Windows-accessible shared storage**.
 
-### B.1 Approved 128 GB partition plan
+### B.1 Approved 128 GB partition plan (119.24 GiB usable)
 
-| Label | Purpose | Filesystem | Size |
-|---|---|---|---|
-| **LIVE** | Base system + TITAN apps (boot/EFI + root) | ext4 (+ FAT32 EFI) | ~28 GB |
-| **AI** | Local AI models | ext4 | ~35 GB |
-| **SHARED** | Your outputs (images, video, audio, docs) | **exFAT** | ~45 GB |
-| **EXTRA** | Reserve, cache, updates | (free / ext4) | ~20 GB |
+Measured device: Realtek RTL9210B-CG USB SSD, 128.03 GB / **119.24 GiB usable**.
+Full detail in [docs/STORAGE_LAYOUT.md](docs/STORAGE_LAYOUT.md).
 
-- **exFAT** on SHARED is deliberate: it is read/write on **both Linux and Windows**
-  and handles large video files — so your renders are accessible from either OS.
-- Large **video** models are **not** installed by default; they belong on an
-  optional second external drive. The storage manager warns before any download
-  that would breach free-space reserves.
+| # | Label | FS | Size (GiB) | Windows | Purpose |
+|---|---|---|---:|:--:|---|
+| 1 | `TITAN_EFI` | FAT32 | 1 | shown | UEFI boot (ESP), GRUB on the SSD only |
+| 2 | `TITAN_BOOT` | ext4 | 21 | no | Live base (read-only SquashFS) + boot files |
+| 3 | `TITAN_SYSTEM` | ext4 | 14 | no | Persistent app/runtime, deps, config, logs + overlay |
+| 4 | `TITAN_MODELS` | ext4 | 23 | no | Optional AI model weights |
+| 5 | `TITAN_WORKSPACE` | **exFAT** | 52 | **yes** | **User outputs — cross-OS, protected** |
+| — | free | — | ~8.2 | — | Recovery buffer + over-provisioning |
+
+- **exFAT** on `TITAN_WORKSPACE` is deliberate: read/write on **both Linux and
+  Windows**, handles large video files, and keeps your outputs accessible without
+  booting Linux. It is a **separate partition** so it survives system updates,
+  recovery, and Live rebuilds.
+- `TITAN_MODELS`/`TITAN_SYSTEM` are **ext4** (perms/symlinks that model runtimes
+  and Python envs need; exFAT can't provide them).
+- Large **video** models are **not** installed by default; they belong on
+  `TITAN_MODELS` or an optional second external drive. The storage manager warns
+  before any download that would breach free-space reserves.
 - These are **planning targets**. The installer presents the computed plan from
   the SSD's *actual* usable capacity and asks for approval before writing anything.
 
