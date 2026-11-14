@@ -21,22 +21,39 @@ from modules.chat import ollama_client
 from modules.video_studio.code_animation import render_html_animation, AnimationResult
 
 FRAMEWORK = Path(__file__).with_name("scene_lib") / "framework.html"
-COMPONENT_TYPES = ["pump", "tank", "motor", "valve", "person", "gauge", "box"]
+COMPONENT_TYPES = [
+    # water / general
+    "pump", "tank", "valve", "gauge", "filter", "motor",
+    # production line
+    "conveyor", "mixer", "compressor", "fan",
+    # electrical
+    "panel", "transformer", "generator",
+    # sewage / people / generic
+    "manhole", "person", "box",
+]
 
 PLANNER_SYSTEM = (
     "You plan an engineering explainer animation. Output ONLY a JSON object, no "
     "prose. Canvas is 1280x720.\n"
-    "Component types ONLY: pump, tank, motor, valve, person, gauge, box.\n"
+    "Component types ONLY (pick what matches the system):\n"
+    "  water/general: pump, tank, valve, gauge, filter, motor\n"
+    "  production:     conveyor, mixer, compressor, fan\n"
+    "  electrical:     panel, transformer, generator\n"
+    "  sewage/people:  manhole, person, box\n"
     "Schema:\n"
     '{\n'
-    '  "title": "<Arabic title>", "subtitle": "<English>", "duration": <6-12>,\n'
-    '  "components": [{"id":"a","type":"pump","x":640,"y":380,'
+    '  "title":"<Arabic>", "subtitle":"<English>", "duration":<7-14>,\n'
+    '  "components":[{"id":"a","type":"pump","x":640,"y":380,'
     '"label":"<Arabic>","en":"<English>","appear":1.0}],\n'
-    '  "pipes": [{"from":"a","to":"b","appear":2.0,"label":"<optional Arabic>"}]\n'
+    '  "pipes":[{"from":"a","to":"b","appear":2.0,"label":"<optional Arabic>"}],\n'
+    '  "camera":[{"t":0,"zoom":1,"x":640,"y":360},'
+    '{"t":5,"zoom":1.8,"x":<focus x>,"y":<focus y>},'
+    '{"t":7,"zoom":1,"x":640,"y":360}]\n'
     "}\n"
-    "Rules: spread components (x 150-1130, y 180-560); sequential appear times "
-    "(0.5,1.5,2.5,...); pipes connect component ids (or a [x,y] point). Use "
-    "Arabic labels. Pick components that match the requested system."
+    "Rules: spread components (x 150-1130, y 200-540); sequential appear times; "
+    "pipes connect component ids (or an [x,y] point); Arabic labels. OPTIONAL "
+    "camera keyframes do a focus/zoom shot onto one component then zoom back "
+    "(zoom 1-2.2). Pick components that match the requested system."
 )
 
 _EXAMPLE = (
@@ -105,6 +122,19 @@ def validate_repair(spec: dict) -> dict:
         out["pipes"].append({"from": frm, "to": to,
                              "appear": _clamp(p.get("appear", 2), 0, 18, 2),
                              "label": str(p.get("label", ""))[:30]})
+    cam = spec.get("camera")
+    if isinstance(cam, list) and cam:
+        kfs = []
+        for k in cam[:8]:
+            if not isinstance(k, dict):
+                continue
+            kfs.append({"t": _clamp(k.get("t", 0), 0, out["duration"], 0),
+                        "zoom": _clamp(k.get("zoom", 1), 0.8, 2.6, 1),
+                        "x": _clamp(k.get("x", 640), 0, 1280, 640),
+                        "y": _clamp(k.get("y", 360), 0, 720, 360)})
+        if kfs:
+            kfs.sort(key=lambda k: k["t"])
+            out["camera"] = kfs
     if not out["components"]:
         raise ValueError("no valid components produced")
     return out

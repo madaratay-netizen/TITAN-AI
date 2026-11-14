@@ -123,6 +123,33 @@ def render(req: RenderReq):
             "size_mb": round(result.size_bytes / (1024 * 1024), 2)}
 
 
+class SceneReq(BaseModel):
+    request: str
+    model: str | None = None
+
+
+@router.post("/scene")
+def scene(req: SceneReq):
+    """Engineering explainer by composition: Arabic request -> local-LLM scene
+    plan -> component library -> rendered MP4 (offline, no GPU)."""
+    if not req.request.strip():
+        raise HTTPException(400, "request is required")
+    st = ollama_client.status(settings.ollama_host)
+    if not st.running:
+        raise HTTPException(503, "Local Ollama is not running (needed to plan the scene).")
+    model = req.model or settings.default_model
+    from modules.video_studio import scene_builder
+    out = _VIDEOS / f"scene_{int(time.time())}.mp4"
+    try:
+        r = scene_builder.make_video(req.request, str(out), model=model,
+                                     host=settings.ollama_host)
+    except Exception as exc:
+        raise HTTPException(500, f"Scene render failed: {exc}")
+    return {"url": f"/api/video/file/{out.name}", "title": r["spec"].get("title"),
+            "components": r["components"], "duration_s": r["duration_s"],
+            "frames": r["frames"], "has_camera": bool(r["spec"].get("camera"))}
+
+
 @router.get("/file/{name}")
 def get_file(name: str):
     if not _SAFE.match(name):
