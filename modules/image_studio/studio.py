@@ -60,7 +60,13 @@ def preflight(report: HardwareReport, ckpt_name: str,
               width: int, height: int) -> Preflight:
     base = _model_base_mb(ckpt_name)
     est = int(base * (width * height) / (1024 * 1024))
-    budget = engine.vram_budget_mb(report)
+    # Budget is based on TOTAL VRAM, not momentary free: ComfyUI is the loader
+    # and manages its own memory (--lowvram swaps), so once it is resident the
+    # "free" figure is misleading. Total VRAM is the right "can the GPU run it"
+    # measure for the ComfyUI backend.
+    gpu = report.best_gpu
+    total_vram = gpu.vram_total_mb if (gpu and gpu.vendor == "nvidia") else 0
+    budget = int(total_vram * 0.9)
     if budget >= est:
         return Preflight(True, "cuda", est, budget, False,
                          f"fits VRAM ({est} MB <= {budget} MB budget)")
