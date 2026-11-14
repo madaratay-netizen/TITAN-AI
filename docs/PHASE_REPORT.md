@@ -117,8 +117,14 @@ and installation docs, `docker-compose.yml`, pinned `requirements.txt`.
   (needs_allow); /generate returns an honest **503** (no fake image); the VRAM
   gate is unit-tested for the 409 path. Dashboard shows the honest banner + preflight.
 - **Honest hardware note:** on the RTX 2050 (4 GB) SDXL exceeds the safe VRAM
-  budget — real generation needs ComfyUI installed and ideally a ≥6 GB GPU.
-- Routes `/api/image/*` + an Image Studio dashboard view.
+  budget, but **SD 1.5 at 512×512 runs well** — verified: ComfyUI v0.7.0 + SD 1.5
+  generated a real image in **~14 s on the RTX 2050** (CUDA, `--lowvram`).
+- Routes `/api/image/*` + an Image Studio dashboard view. Defaults tuned to SD 1.5.
+- **Video Studio integration:** `modules/video_studio/visuals.py` generates an AI
+  image per scene via ComfyUI (the "AI scene images" option), so a rendered video
+  shows real generated visuals instead of title cards — verified end-to-end
+  (3-scene narrated 720p video from generated images). Falls back to title cards
+  honestly when ComfyUI isn't running. Setup: `scripts/install_comfyui.sh`.
 
 ## Storage / Workspace Manager ✅ done & verified live (Phase 3 / brief §4)
 - `core/storage_manager/` — creates & guards `TITAN_WORKSPACE`:

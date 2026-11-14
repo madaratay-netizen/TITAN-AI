@@ -229,8 +229,8 @@
           <textarea id="img-prompt" placeholder="Prompt…" style="width:100%;height:70px;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:8px;margin:8px 0">a photorealistic desert reef research station at sunset, cinematic</textarea>
           <textarea id="img-neg" placeholder="Negative prompt…" style="width:100%;height:44px;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:8px">text, watermark, lowres, bad anatomy</textarea>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
-            <label class="muted" style="font-size:12px">W <input id="img-w" type="number" value="1024" style="width:70px;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:6px;border-radius:6px"/></label>
-            <label class="muted" style="font-size:12px">H <input id="img-h" type="number" value="1024" style="width:70px;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:6px;border-radius:6px"/></label>
+            <label class="muted" style="font-size:12px">W <input id="img-w" type="number" value="512" style="width:70px;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:6px;border-radius:6px"/></label>
+            <label class="muted" style="font-size:12px">H <input id="img-h" type="number" value="512" style="width:70px;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:6px;border-radius:6px"/></label>
             <label class="muted" style="font-size:12px">Steps <input id="img-steps" type="number" value="25" style="width:60px;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:6px;border-radius:6px"/></label>
             <label class="muted" style="font-size:12px">CFG <input id="img-cfg" type="number" value="7" step="0.5" style="width:60px;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:6px;border-radius:6px"/></label>
             <label class="muted" style="font-size:12px">Seed <input id="img-seed" type="number" value="0" style="width:80px;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:6px;border-radius:6px"/></label>
@@ -268,6 +268,7 @@
           <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
             <select id="vid-res" style="background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:8px;border-radius:6px"><option value="480p">480p</option><option value="720p" selected>720p</option><option value="1080p">1080p</option></select>
             <label class="muted" style="font-size:12px"><input type="checkbox" id="vid-narrate" checked/> narration (TTS)</label>
+            <label class="muted" style="font-size:12px"><input type="checkbox" id="vid-visuals"/> AI scene images</label>
             <label class="muted" style="font-size:12px"><input type="checkbox" id="vid-subs"/> subtitles</label>
           </div>
           <button id="vid-render" style="margin-top:10px" disabled>Render MP4</button>
@@ -591,7 +592,8 @@ async function vidStory(){const idea=$('#vid-idea').value.trim();if(!idea)return
   catch(e){$('#vid-scenes').innerHTML='<span style="color:var(--bad)">⚠ '+e.message+'</span>';}}
 async function vidRender(){if(!vidProject)return;
   $('#vid-out').innerHTML='<span class="muted">Rendering MP4 (FFmpeg)… this can take a bit.</span>';$('#vid-render').disabled=true;
-  try{const r=await kcPost('/api/video/render',{project_id:vidProject.id,resolution:$('#vid-res').value,narrate:$('#vid-narrate').checked,burn_subtitles:$('#vid-subs').checked});
+  if($('#vid-visuals').checked)$('#vid-out').innerHTML='<span class="muted">Generating AI images per scene… (slow on this GPU)</span>';
+  try{const r=await kcPost('/api/video/render',{project_id:vidProject.id,resolution:$('#vid-res').value,narrate:$('#vid-narrate').checked,visuals:$('#vid-visuals').checked,burn_subtitles:$('#vid-subs').checked});
     $('#vid-out').innerHTML=`<video controls src="${r.url}" style="width:100%;border-radius:8px"></video>
       <div class="muted" style="font-size:12px;margin-top:6px">${r.resolution} · ${r.duration_s}s · ${r.scenes} scenes · ${r.size_mb} MB · <a href="${r.url}" download style="color:var(--blue)">download</a></div>`;}
   catch(e){$('#vid-out').innerHTML='<div class="card" style="border-color:#5a2a1c"><span style="color:var(--warn)">⚠ '+e.message+'</span></div>';}

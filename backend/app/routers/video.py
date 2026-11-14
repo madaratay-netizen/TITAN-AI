@@ -15,6 +15,7 @@ from modules.video_studio.project import VideoProject
 from modules.video_studio import storyboard
 from modules.video_studio.assembler import Assembler, AssemblerError, ffmpeg
 from modules.video_studio import generation
+from modules.video_studio import visuals
 from modules.voice_studio import tts
 from modules.chat import ollama_client
 from backend.app.config import settings, REPO_ROOT
@@ -42,6 +43,7 @@ class RenderReq(BaseModel):
     resolution: str = "720p"
     burn_subtitles: bool = False
     narrate: bool = False
+    visuals: bool = False     # generate an AI image per scene via ComfyUI
 
 
 @router.get("/status")
@@ -88,6 +90,14 @@ def render(req: RenderReq):
     if not f.is_file():
         raise HTTPException(404, "project not found")
     proj = VideoProject.load(f)
+
+    # Optional: generate a real image per scene via local ComfyUI (if running).
+    if req.visuals:
+        if visuals.comfy_available():
+            visuals.generate_scene_images(proj, detector.detect(),
+                                          out_dir=str(_WS / "Images"))
+            proj.save(f)
+        # If ComfyUI isn't running we simply keep title cards (no fake visuals).
 
     # Optional: synthesize narration per scene via the local TTS engine.
     if req.narrate:

@@ -20,10 +20,11 @@ _OUT = REPO_ROOT / "storage" / "workspace" / "images"
 class GenReq(BaseModel):
     prompt: str
     negative: str = "text, watermark, lowres, bad anatomy"
-    ckpt_name: str = "sd_xl_base_1.0.safetensors"
-    width: int = 1024
-    height: int = 1024
-    steps: int = 25
+    # Defaults match the 4 GB-VRAM-friendly SD 1.5 checkpoint installed with TITAN.
+    ckpt_name: str = "v1-5-pruned-emaonly.safetensors"
+    width: int = 512
+    height: int = 512
+    steps: int = 20
     cfg: float = 7.0
     sampler: str = "euler"
     scheduler: str = "normal"
