@@ -102,9 +102,27 @@ and installation docs, `docker-compose.yml`, pinned `requirements.txt`.
   Piper ar_* model or a Windows Arabic language pack), per the spec's verify-first rule.
 - Routes `/api/voice/*` + a working Voice Studio dashboard view with audio playback.
 
-## Phases 6–7, 11 — Image/Video + hardening 🔜 planned
-Image (ComfyUI/SDXL), Video (scene-based FFmpeg pipeline), firewall/offline
-hardening, storage manager. Scaffolded; **not implemented**.
+## Phase 6 — Image Studio ✅ done & verified (real ComfyUI; no placeholders)
+- `modules/image_studio/` — a genuine ComfyUI integration:
+  - `comfy_client.py` — real ComfyUI HTTP API client (system_stats liveness,
+    /prompt submit, /history poll, /view fetch, /queue depth).
+  - `workflows.py` — builds real ComfyUI API-format graphs (SDXL text-to-image,
+    image-to-image, latent upscale), with parameter validation.
+  - `studio.py` — orchestrator with a **VRAM gate** (reuses the adaptive engine):
+    estimates VRAM for the resolution/model and refuses (unless allow_slow) when
+    it exceeds the safe budget. **If ComfyUI is not running, raises
+    ImageStudioUnavailable — it never returns a placeholder image** (spec rule).
+- **Verified live (this machine has no ComfyUI):** status reports not-running
+  honestly; preflight for SDXL 1024² returns est 6000 MB > 3053 MB budget
+  (needs_allow); /generate returns an honest **503** (no fake image); the VRAM
+  gate is unit-tested for the 409 path. Dashboard shows the honest banner + preflight.
+- **Honest hardware note:** on the RTX 2050 (4 GB) SDXL exceeds the safe VRAM
+  budget — real generation needs ComfyUI installed and ideally a ≥6 GB GPU.
+- Routes `/api/image/*` + an Image Studio dashboard view.
+
+## Phases 7, 11 — Video + hardening 🔜 planned
+Video (scene-based FFmpeg pipeline), firewall/offline hardening, storage manager.
+Scaffolded; **not implemented**.
 
 ## Phase 12 — Install/deploy/recovery/test scripts 🟡 partial
 - `scripts/titan_report.py` ✅, `scripts/offline_test.py` ✅ (5/5 pass),
@@ -117,7 +135,7 @@ hardening, storage manager. Scaffolded; **not implemented**.
 ## Tests actually run
 | Suite | Result |
 |---|---|
-| `pytest` (engine + registry + API + RAG + dev + cyber + voice) | **79 passed** |
+| `pytest` (engine + registry + API + RAG + dev + cyber + voice + image) | **91 passed** |
 | `scripts/offline_test.py` | **5 passed, 0 failed, 0 skipped** |
 | Live API + chat (`qwen3.5:4b`) | **verified** |
 | Dashboard render (browser) | **verified** |

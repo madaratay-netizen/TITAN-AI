@@ -94,7 +94,7 @@ FastAPI app, **loopback-bound by default**, CORS limited to localhost. Endpoints
 | Module | Status | Engine(s) |
 |---|---|---|
 | `chat` | **Implemented** (Ollama client, streaming + direct) | Ollama / llama.cpp |
-| `image_studio` | Planned (Phase 6) | ComfyUI + SDXL/FLUX |
+| `image_studio` | **Implemented** (Phase 6) — real ComfyUI API + VRAM gate | ComfyUI + SDXL/FLUX |
 | `video_studio` | Planned (Phase 7) — scene-based pipeline | ComfyUI + FFmpeg + TTS |
 | `voice_studio` | **Implemented** (Phase 8) — TTS live, STT engine-gated | Piper/pyttsx3 (TTS), whisper.cpp/faster-whisper (STT), ffmpeg |
 | `knowledge_center` | **Implemented** (Phase 9) — RAG with citations | local embeddings + SQLite vector store |

@@ -32,6 +32,9 @@ any compatible x86-64 PC without touching the host's internal drives.
   WAV/MP3), SRT/VTT subtitle generation, and speech-to-text wired to
   whisper.cpp/faster-whisper. Engines are detected and reported honestly; no
   capability is claimed that isn't installed.
+- **Image Studio** — a real ComfyUI integration (SDXL text-to-image / img2img /
+  upscale workflows) with a VRAM gate. If ComfyUI isn't running it says so
+  honestly and refuses — it never shows a placeholder image.
 - **Dashboard** — live hardware, profile, models, and a working chat, loopback-only.
 - **Offline manager** — honest network-state reporting with three isolation levels.
 - **Tests** — deterministic engine tests (`pytest`).
