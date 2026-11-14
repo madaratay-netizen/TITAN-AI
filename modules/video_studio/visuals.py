@@ -26,15 +26,29 @@ def comfy_available(host: str = "http://127.0.0.1:8188") -> bool:
     return ComfyUIClient(host).status().running
 
 
+def best_checkpoint(host: str = "http://127.0.0.1:8188", fallback: str = SD15_CKPT) -> str:
+    """Pick the nicest installed checkpoint (prefer DreamShaper), else fallback."""
+    cps = ComfyUIClient(host).list_checkpoints()
+    if not cps:
+        return fallback
+    for want in ("dream", "sd_xl", "sdxl"):
+        for c in cps:
+            if want in c.lower():
+                return c
+    return cps[0]
+
+
 def generate_scene_images(project: VideoProject, report: HardwareReport,
                           out_dir: str | Path, host: str = "http://127.0.0.1:8188",
-                          ckpt: str = SD15_CKPT, size: int = DEFAULT_SIZE,
+                          ckpt: str | None = None, size: int = DEFAULT_SIZE,
                           steps: int = DEFAULT_STEPS, timeout: float = 300.0) -> dict:
     """For each scene without a source, generate an image and attach it.
 
     Returns a summary {generated, failed, scenes}. Scenes that fail keep their
     title card (honest fallback).
     """
+    if ckpt is None:
+        ckpt = best_checkpoint(host)
     studio = ImageStudio(report, comfy_host=host, output_dir=out_dir)
     generated, failed = 0, 0
     for i, scene in enumerate(project.scenes):

@@ -117,6 +117,18 @@ class ComfyUIClient:
         """Full URL to fetch a generated image."""
         return self.host + ref.view_path()
 
+    def list_checkpoints(self, timeout: float = 5.0) -> list[str]:
+        """Available checkpoint files, from ComfyUI's CheckpointLoaderSimple node."""
+        try:
+            req = urllib.request.Request(
+                self.host + "/object_info/CheckpointLoaderSimple", method="GET")
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+            opts = data["CheckpointLoaderSimple"]["input"]["required"]["ckpt_name"][0]
+            return [o for o in opts if isinstance(o, str)]
+        except (urllib.error.URLError, OSError, ValueError, KeyError, IndexError):
+            return []
+
     def queue_depth(self, timeout: float = 3.0) -> Optional[int]:
         try:
             req = urllib.request.Request(self.host + "/queue", method="GET")

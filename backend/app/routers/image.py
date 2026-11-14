@@ -55,6 +55,17 @@ def status():
     }
 
 
+@router.get("/checkpoints")
+def checkpoints():
+    """Checkpoints ComfyUI can load (newest/best first when recognizable)."""
+    from modules.image_studio.comfy_client import ComfyUIClient
+    cps = ComfyUIClient(_COMFY_HOST).list_checkpoints()
+    # Surface a friendlier label; prefer DreamShaper as a nicer default.
+    cps_sorted = sorted(cps, key=lambda n: (0 if "dream" in n.lower() else 1, n.lower()))
+    return {"checkpoints": cps_sorted,
+            "default": cps_sorted[0] if cps_sorted else None}
+
+
 @router.get("/models")
 def models():
     report = detector.detect()

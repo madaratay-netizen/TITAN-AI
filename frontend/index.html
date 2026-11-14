@@ -228,6 +228,7 @@
           <h3>Text to image</h3>
           <textarea id="img-prompt" placeholder="Prompt…" style="width:100%;height:70px;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:8px;margin:8px 0">a photorealistic desert reef research station at sunset, cinematic</textarea>
           <textarea id="img-neg" placeholder="Negative prompt…" style="width:100%;height:44px;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:8px">text, watermark, lowres, bad anatomy</textarea>
+          <div style="margin-top:8px"><label class="muted" style="font-size:12px">Model <select id="img-ckpt" style="background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:7px;border-radius:6px;min-width:200px"></select></label></div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
             <label class="muted" style="font-size:12px">W <input id="img-w" type="number" value="512" style="width:70px;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:6px;border-radius:6px"/></label>
             <label class="muted" style="font-size:12px">H <input id="img-h" type="number" value="512" style="width:70px;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:6px;border-radius:6px"/></label>
@@ -520,9 +521,10 @@ $('#vo-gen')&&($('#vo-gen').onclick=voGen);
 $('#vo-srt-demo')&&($('#vo-srt-demo').onclick=voSrtDemo);
 
 // ---- Image Studio ----
-function imgParams(){return {prompt:$('#img-prompt').value,negative:$('#img-neg').value,
+function imgParams(){const p={prompt:$('#img-prompt').value,negative:$('#img-neg').value,
   width:+$('#img-w').value,height:+$('#img-h').value,steps:+$('#img-steps').value,
-  cfg:+$('#img-cfg').value,seed:+$('#img-seed').value,allow_slow:$('#img-allow').checked};}
+  cfg:+$('#img-cfg').value,seed:+$('#img-seed').value,allow_slow:$('#img-allow').checked};
+  if($('#img-ckpt')&&$('#img-ckpt').value)p.ckpt_name=$('#img-ckpt').value;return p;}
 async function imgLoad(){
   const s=await api('/api/image/status');
   const running=s.comfyui&&s.comfyui.running;
@@ -531,6 +533,9 @@ async function imgLoad(){
     :`<div class="card" style="border-color:#5a2a1c"><span style="color:var(--warn)">● ComfyUI not running</span> — ${s.note||''} ${s.hardware&&s.hardware.note?'<br>'+s.hardware.note:''}<div class="muted" style="font-size:12px;margin-top:6px">VRAM budget: ${s.hardware?s.hardware.vram_budget_mb:'?'} MB. Install &amp; start ComfyUI (python main.py) to enable real generation.</div></div>`;
   const m=await api('/api/image/models');
   $('#img-models').textContent=m.models.map(x=>`${x.name}  ${x.download_gb}GB  [${x.compatibility_status}]\n  min VRAM ${x.min_vram_mb}MB · ${x.license}`).join('\n\n');
+  try{const cp=await api('/api/image/checkpoints');
+    $('#img-ckpt').innerHTML=(cp.checkpoints||[]).map(c=>`<option value="${c}">${c.replace('.safetensors','')}</option>`).join('')||'<option value="">(no models found)</option>';
+  }catch(e){}
 }
 async function imgPreflight(){const p=imgParams();
   const r=await kcPost('/api/image/preflight',p);
