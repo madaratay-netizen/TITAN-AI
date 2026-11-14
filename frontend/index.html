@@ -68,7 +68,7 @@
     <a data-view="chat" href="#">AI Chat</a>
     <a data-view="models" href="#">Model Manager</a>
     <a data-view="image" href="#">Image Studio</a>
-    <a class="dim" title="Requires PROFILE 5 GPU / external drive">Video Studio</a>
+    <a data-view="video" href="#">Video Studio</a>
     <a data-view="voice" href="#">Voice Studio</a>
     <a data-view="knowledge" href="#">Knowledge Center</a>
     <a data-view="dev" href="#">Developer Lab</a>
@@ -247,6 +247,33 @@
         </div>
       </div>
       <div class="notice">Images are produced by a real local ComfyUI instance. If ComfyUI isn't running, generation is refused honestly — no fake preview is shown.</div>
+    </div>
+    <!-- VIDEO STUDIO -->
+    <div id="view-video" class="hidden">
+      <h2>Video Studio <span class="muted">— scene-based, FFmpeg assembly</span></h2>
+      <div id="vid-banner" style="margin-bottom:12px"></div>
+      <div class="grid" style="grid-template-columns:1.2fr 1fr;align-items:start">
+        <div class="card">
+          <h3>1 · Storyboard (local LLM)</h3>
+          <textarea id="vid-idea" placeholder="Describe the video idea…" style="width:100%;height:70px;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px;border-radius:8px;margin:8px 0">A 30-second overview of the TITAN AI portable offline workstation</textarea>
+          <div style="display:flex;gap:8px;align-items:center">
+            <label class="muted" style="font-size:12px">Scenes <input id="vid-count" type="number" value="4" style="width:56px;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:6px;border-radius:6px"/></label>
+            <button id="vid-story">Generate storyboard</button>
+          </div>
+          <div id="vid-scenes" style="margin-top:10px"></div>
+        </div>
+        <div class="card">
+          <h3>2 · Render</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <select id="vid-res" style="background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:8px;border-radius:6px"><option value="480p">480p</option><option value="720p" selected>720p</option><option value="1080p">1080p</option></select>
+            <label class="muted" style="font-size:12px"><input type="checkbox" id="vid-narrate" checked/> narration (TTS)</label>
+            <label class="muted" style="font-size:12px"><input type="checkbox" id="vid-subs"/> subtitles</label>
+          </div>
+          <button id="vid-render" style="margin-top:10px" disabled>Render MP4</button>
+          <div id="vid-out" style="margin-top:12px"></div>
+        </div>
+      </div>
+      <div class="notice">Real FFmpeg assembly — works offline on this hardware. A long video is built from scenes, not one AI inference. AI clip generation is optional and shown only when the hardware supports it.</div>
     </div>
     <!-- STORAGE MANAGER -->
     <div id="view-storage" class="hidden">
@@ -515,14 +542,44 @@ async function stBackup(){$('#st-action').textContent='Backing up…';
 $('#st-ensure')&&($('#st-ensure').onclick=stEnsure);
 $('#st-backup')&&($('#st-backup').onclick=stBackup);
 
-function show(v){['dashboard','chat','models','knowledge','dev','cyber','voice','image','storage'].forEach(x=>$('#view-'+x).classList.toggle('hidden',x!==v));
+// ---- Video Studio ----
+let vidProject=null;
+async function vidLoad(){
+  const s=await api('/api/video/status');
+  const ai=s.ai_generation;
+  $('#vid-banner').innerHTML=`<div class="card"><span style="color:${s.ffmpeg?'var(--green)':'var(--bad)'}">● FFmpeg ${s.ffmpeg?'ready':'missing'}</span> — scene assembly ${s.assembly_available?'available':'unavailable'}.
+    <div class="muted" style="font-size:12px;margin-top:4px">AI clip generation: ${ai.available?'available':'not available'} — ${ai.reason}</div></div>`;
+}
+async function vidStory(){const idea=$('#vid-idea').value.trim();if(!idea)return;
+  $('#vid-scenes').innerHTML='<span class="muted">Generating storyboard locally…</span>';
+  try{const p=await kcPost('/api/video/storyboard',{idea,name:'TITAN clip',scene_count:+$('#vid-count').value});
+    vidProject=p;
+    $('#vid-scenes').innerHTML=`<div class="muted" style="font-size:12px;margin-bottom:6px">${p.scenes.length} scenes · ~${p.total_duration}s</div>`+
+      p.scenes.map((s,i)=>`<div style="border:1px solid var(--line);border-radius:8px;padding:8px;margin-bottom:6px">
+        <b>${i+1}. ${s.title||'(untitled)'}</b> <span class="muted">· ${s.duration}s</span>
+        <div class="muted" style="font-size:12px">${s.description||''}</div>
+        <div style="font-size:12px">🔊 ${s.narration||''}</div></div>`).join('');
+    $('#vid-render').disabled=false;}
+  catch(e){$('#vid-scenes').innerHTML='<span style="color:var(--bad)">⚠ '+e.message+'</span>';}}
+async function vidRender(){if(!vidProject)return;
+  $('#vid-out').innerHTML='<span class="muted">Rendering MP4 (FFmpeg)… this can take a bit.</span>';$('#vid-render').disabled=true;
+  try{const r=await kcPost('/api/video/render',{project_id:vidProject.id,resolution:$('#vid-res').value,narrate:$('#vid-narrate').checked,burn_subtitles:$('#vid-subs').checked});
+    $('#vid-out').innerHTML=`<video controls src="${r.url}" style="width:100%;border-radius:8px"></video>
+      <div class="muted" style="font-size:12px;margin-top:6px">${r.resolution} · ${r.duration_s}s · ${r.scenes} scenes · ${r.size_mb} MB · <a href="${r.url}" download style="color:var(--blue)">download</a></div>`;}
+  catch(e){$('#vid-out').innerHTML='<div class="card" style="border-color:#5a2a1c"><span style="color:var(--warn)">⚠ '+e.message+'</span></div>';}
+  $('#vid-render').disabled=false;}
+$('#vid-story')&&($('#vid-story').onclick=vidStory);
+$('#vid-render')&&($('#vid-render').onclick=vidRender);
+
+function show(v){['dashboard','chat','models','knowledge','dev','cyber','voice','image','storage','video'].forEach(x=>$('#view-'+x).classList.toggle('hidden',x!==v));
   document.querySelectorAll('nav a[data-view]').forEach(a=>a.classList.toggle('active',a.dataset.view===v));
   if(v==='models')loadModels();
   if(v==='knowledge')kcLoadLibs();
   if(v==='cyber')cyLoad();
   if(v==='voice')voLoad();
   if(v==='image')imgLoad();
-  if(v==='storage')stLoad();}
+  if(v==='storage')stLoad();
+  if(v==='video')vidLoad();}
 document.querySelectorAll('nav a[data-view]').forEach(a=>a.onclick=e=>{e.preventDefault();show(a.dataset.view);});
 $('#send').onclick=send;$('#inp').addEventListener('keydown',e=>{if(e.key==='Enter')send();});
 setInterval(()=>$('#clock').textContent=new Date().toLocaleTimeString(),1000);

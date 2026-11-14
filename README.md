@@ -35,6 +35,12 @@ any compatible x86-64 PC without touching the host's internal drives.
 - **Image Studio** — a real ComfyUI integration (SDXL text-to-image / img2img /
   upscale workflows) with a VRAM gate. If ComfyUI isn't running it says so
   honestly and refuses — it never shows a placeholder image.
+- **Video Studio** — scene-based production: a local-LLM storyboard, then a real
+  **FFmpeg** render (title/clip/image scenes, TTS narration, subtitles, music) to
+  MP4. Works offline on modest hardware; AI clip generation is optional and
+  hardware-gated (never faked).
+- **Storage Manager** — creates & guards the exFAT `TITAN_WORKSPACE`: capacity/
+  health, a free-space reserve, exFAT-safe atomic writes, backup/restore.
 - **Dashboard** — live hardware, profile, models, and a working chat, loopback-only.
 - **Offline manager** — honest network-state reporting with three isolation levels.
 - **Tests** — deterministic engine tests (`pytest`).

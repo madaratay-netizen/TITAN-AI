@@ -136,9 +136,26 @@ and installation docs, `docker-compose.yml`, pinned `requirements.txt`.
 - Routes `/api/storage/*` + a Storage Manager dashboard view (health cards, folder
   table, plan, ensure/backup actions).
 
-## Phases 7, 11 — Video + offline hardening 🔜 planned
-Video (scene-based FFmpeg pipeline) and firewall/offline network hardening.
-Scaffolded; **not implemented**.
+## Phase 7 — Video Studio ✅ done & verified live (FFmpeg assembly)
+- `modules/video_studio/` — a real **scene-based** production pipeline:
+  - `project.py` — multi-scene project model (JSON-persisted; add/remove/reorder/
+    duration edits; resume after interruption). A 3-minute video = many scenes.
+  - `storyboard.py` — **local-LLM** idea → scene breakdown (title/description/
+    narration/duration). Produces a plan, never claims to be rendered video.
+  - `assembler.py` — **real FFmpeg render**: title/color cards, still images, and
+    imported clips → normalized → concat → MP4; optional per-scene narration audio,
+    burned subtitles, background music; 480p/720p/1080p/4k.
+  - `generation.py` — optional AI clip generation, **hardware-gated and honest**:
+    on <12 GB VRAM it refuses and points to the import+assemble path (never fakes).
+- **Verified live:** `qwen3.5:4b` produced a 3-scene storyboard; a **narrated MP4**
+  was rendered (854×480, 13.6 s, local TTS voiceover) and played back — fully
+  offline. AI clip-gen correctly reported unavailable on the RTX 2050 (4 GB).
+- On low-resource machines, editing/assembly from imported footage works without
+  any AI video model (per the brief). Routes `/api/video/*` + a Video Studio view.
+
+## Phase 11 — Offline hardening 🔜 planned
+Firewall rules + network egress hardening + the offline isolation test on
+hardware. Scaffolded; **not implemented**.
 
 ## Phase 12 — Install/deploy/recovery/test scripts 🟡 partial
 - `scripts/titan_report.py` ✅, `scripts/offline_test.py` ✅ (5/5 pass),
@@ -151,7 +168,7 @@ Scaffolded; **not implemented**.
 ## Tests actually run
 | Suite | Result |
 |---|---|
-| `pytest` (engine + registry + API + RAG + dev + cyber + voice + image + storage) | **106 passed** |
+| `pytest` (engine + registry + API + RAG + dev + cyber + voice + image + storage + video) | **113 passed** |
 | `scripts/offline_test.py` | **5 passed, 0 failed, 0 skipped** |
 | Live API + chat (`qwen3.5:4b`) | **verified** |
 | Dashboard render (browser) | **verified** |

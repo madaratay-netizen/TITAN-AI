@@ -24,7 +24,7 @@ from core.model_registry.registry import ModelRegistry
 from core.offline_manager import offline
 from modules.chat import ollama_client
 from backend.app.config import settings, REPO_ROOT
-from backend.app.routers import knowledge, dev, cyber, voice, image, storage
+from backend.app.routers import knowledge, dev, cyber, voice, image, storage, video
 
 logging.basicConfig(
     level=logging.INFO,
@@ -55,6 +55,7 @@ app.include_router(cyber.router)
 app.include_router(voice.router)
 app.include_router(image.router)
 app.include_router(storage.router)
+app.include_router(video.router)
 
 # Planning budget for a 128GB external SSD (final approved design).
 STORAGE_PLAN_128 = {
