@@ -84,6 +84,7 @@ feature, not the system) · honest (no fake output, no untested "passes") · FOS
 with license review · portable & persistent.
 
 ## License & models
-TITAN's own code is **MIT-licensed** — see [LICENSE](LICENSE). Each third-party
-component and AI model keeps its own license; the model registry records it —
-review before redistribution. Model weights are never committed to this repo.
+TITAN's own code is **MIT-licensed** — see [LICENSE](LICENSE). Third-party
+components and AI model weights keep their own licenses — see
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md); the model registry records each
+model's license. Review before redistribution. Model weights are never committed.
